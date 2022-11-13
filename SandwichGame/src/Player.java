@@ -52,7 +52,7 @@ public class Player {
 
     //updates nearby to the arraylist of the current location
     public void updateNearby(){
-        nearby = currentLocation.getNearby();
+        currentLocation.getNearby(nearby);
     }
 
     //print inventory

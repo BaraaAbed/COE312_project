@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public abstract class Location {
     //initializing variables
-    private String description;
+    protected String description;
     public ArrayList<Item> items;//Stores the items that are founf in a location
     public Enemy enemy;//stores the enemy in this location
     public ArrayList<NPC> npcs;//stores the npcs that can be found in this location
@@ -13,5 +13,5 @@ public abstract class Location {
     }
 
     //Function that updates the nearby arraylist in the player object
-    public abstract ArrayList<Location> getNearby();
+    public abstract void getNearby(ArrayList<Location> nearby);
 }
