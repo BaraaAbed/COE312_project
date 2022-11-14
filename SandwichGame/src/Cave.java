@@ -8,8 +8,8 @@ public class Cave extends Location {
     //constructor
     private Cave(){
         description = "";
-        items.add(Mushroom.getInstance());
-        enemy = Gnome.getInstance();
+        items.add(Meat.getInstance());
+        enemy = Phoenix.getInstance();
         blocked = true;//fire not extinquished
     }
 
