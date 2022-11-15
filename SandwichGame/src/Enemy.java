@@ -12,7 +12,7 @@ public class Enemy {
     }
     
     //attack player
-    public void attack(){
+    public void attack(){//attack
         Player.takeDmg(dmg);
     }
 
