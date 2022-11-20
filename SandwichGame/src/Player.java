@@ -7,12 +7,14 @@ public class Player {
     private ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
     private Item equipped;
+    private Weapon weapon; // strategy design pattern
+    private static ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
     private static Player instance;//singleton
 
     //Constructor
     private Player(){
-        currentLocation = new House();
+        currentLocation = House.getInstance();
         health = 100.0;
         dmg = 10.0;
         updateNearby();
@@ -31,13 +33,20 @@ public class Player {
 
     //take dmg
     public static void takeDmg(double _dmg){
+        // add if statement to check if negative health, 
+        // then died/respawn and reset health?
         health -= _dmg;
     }
 
     //deals dmg to enemies
     public void attack(){
-        double totalDmg = dmg*equipped.getDmgMultiplier();
+        double totalDmg = dmg*weapon.getDmgMultiplier(); // using weapon strategy
         UI.fightingEnemy.takeDmg(totalDmg);
+    }
+
+    // set weapon strategy
+    public void setWeapon(Weapon w){
+        weapon = w;
     }
 
     //equip item
@@ -77,4 +86,8 @@ public class Player {
         else System.out.println(item + " is not in the inventory");
     }
 
+    // getter for ingredients array
+    public static ArrayList<Ingredient> getIngredients(){
+        return ingredients;
+    }
 }

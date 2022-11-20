@@ -1,8 +1,8 @@
 
 public class Enemy {
     //initializing variables
-    private double health;
-    private double dmg;
+    protected double health;
+    protected double dmg;
 
     ///Fighting mechanics
     //Start fight
