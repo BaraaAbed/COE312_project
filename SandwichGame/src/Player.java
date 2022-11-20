@@ -7,12 +7,13 @@ public class Player {
     private ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
     private Item equipped;
+    private Weapon weapon; // strategy design pattern
     private double dmg;//base dmg
     private static Player instance;//singleton
 
     //Constructor
     private Player(){
-        currentLocation = new House();
+        currentLocation = House.getInstance();
         health = 100.0;
         dmg = 10.0;
         updateNearby();
@@ -38,8 +39,13 @@ public class Player {
 
     //deals dmg to enemies
     public void attack(){
-        double totalDmg = dmg*equipped.getDmgMultiplier();
+        double totalDmg = dmg*weapon.getDmgMultiplier(); // using weapon strategy
         UI.fightingEnemy.takeDmg(totalDmg);
+    }
+
+    // set weapon strategy
+    public void setWeapon(Weapon w){
+        weapon = w;
     }
 
     //equip item

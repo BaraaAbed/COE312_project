@@ -7,7 +7,7 @@ public class RatHouse extends Location {
     //constructor
     private RatHouse(){
         description = "";
-        items.add(Cheeze.getInstance());
+        items.add(Cheese.getInstance());
         enemy = RatKing.getInstance();
     }
 
