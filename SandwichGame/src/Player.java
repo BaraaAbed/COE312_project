@@ -31,6 +31,8 @@ public class Player {
 
     //take dmg
     public static void takeDmg(double _dmg){
+        // add if statement to check if negative health, 
+        // then died/respawn and reset health?
         health -= _dmg;
     }
 
