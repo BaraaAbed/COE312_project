@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public abstract class Sandwich {
     // this class is used for Template design pattern
