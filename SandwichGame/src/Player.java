@@ -8,6 +8,7 @@ public class Player {
     private ArrayList<Item> inventory;
     private Item equipped;
     private Weapon weapon; // strategy design pattern
+    private static ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
     private static Player instance;//singleton
 
@@ -85,4 +86,8 @@ public class Player {
         else System.out.println(item + " is not in the inventory");
     }
 
+    // getter for ingredients array
+    public static ArrayList<Ingredient> getIngredients(){
+        return ingredients;
+    }
 }
