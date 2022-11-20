@@ -10,7 +10,7 @@ public class Cave extends Location {
         description = "";
         items.add(Meat.getInstance());
         enemy = Phoenix.getInstance();
-        blocked = true;//fire not extinquished
+        blocked = true; //fire not extinguished
     }
 
     //gets instance (for singleton)

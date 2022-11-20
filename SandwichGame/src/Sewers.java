@@ -7,7 +7,7 @@ public class Sewers extends Location {
     //constructor
     private Sewers(){
         description = "";
-        enemy = Rats.getInstance();
+        enemy = RatKing.getInstance();
     }
 
     //gets instance (for singleton)
