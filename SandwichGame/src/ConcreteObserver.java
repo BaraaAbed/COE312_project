@@ -11,7 +11,7 @@ public class ConcreteObserver implements Observer {
         }
     }
     
-    public void update() {
+    public void update(Message m) {
         // implemented in child
     }
 }
