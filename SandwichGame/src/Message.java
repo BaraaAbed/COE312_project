@@ -1,9 +1,9 @@
 public class Message {
     Object origin;
     String topic;
-    String payload;
+    Object payload;
 
-    Message(Object origin, String topic, String payload){
+    Message(Object origin, String topic, Object payload){
         this.origin=origin;
         this.topic=topic;
         this.payload=payload;

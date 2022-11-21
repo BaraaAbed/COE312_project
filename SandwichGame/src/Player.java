@@ -43,7 +43,7 @@ public class Player {
     //deals dmg to enemies
     public void attack(){
         double totalDmg = dmg*weapon.getDmgMultiplier(); // using weapon strategy
-        UI.fightingEnemy.takeDmg(totalDmg);
+        UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
     // set weapon strategy

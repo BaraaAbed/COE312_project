@@ -7,8 +7,8 @@ public class Enemy {
     ///Fighting mechanics
     //Start fight
     public void fight(){
-        UI.fighting = true;
-        UI.fightingEnemy = this;
+        UIClient.fighting = true;
+        UIClient.fightingEnemy = this;
     }
     
     //attack player
