@@ -1,6 +1,6 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:\\Users\\admin\\Desktop\\AUS documents\\Java\\json-simple-1.1.jar"
+        "SandwichGame/lib/json-simple-1.1.jar"
     ]
 }
