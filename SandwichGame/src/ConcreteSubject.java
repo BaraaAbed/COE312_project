@@ -7,9 +7,9 @@ public class ConcreteSubject implements Subject {
         observers = new ArrayList <Observer>();
     }
 
-    public void notifyObservers() {
+    public void publishMessage(Message m) {
         for (int i =0; i < observers.size(); i++) {
-            observers.get(i).update();
+            observers.get(i).update(m);
         }
     }
 

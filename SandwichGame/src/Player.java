@@ -11,6 +11,7 @@ public class Player {
     private static ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
     private static Player instance;//singleton
+    private State state; // state design pattern
 
     //Constructor
     private Player(){
@@ -18,6 +19,7 @@ public class Player {
         health = 100.0;
         dmg = 10.0;
         updateNearby();
+        state = new MapLockedState();
     }
 
     //gets instance (for singleton)
@@ -41,7 +43,7 @@ public class Player {
     //deals dmg to enemies
     public void attack(){
         double totalDmg = dmg*weapon.getDmgMultiplier(); // using weapon strategy
-        UI.fightingEnemy.takeDmg(totalDmg);
+        UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
     // set weapon strategy
@@ -89,5 +91,20 @@ public class Player {
     // getter for ingredients array
     public static ArrayList<Ingredient> getIngredients(){
         return ingredients;
+    }
+
+    // go to next state (used in main/driver/ui)
+    public void nextState() {
+        state.next(this);
+    }
+
+    // print current state
+    public void printStatus() {
+        state.printStatus();
+    }
+
+    // set the state (used by state children)
+    public void setState(State s) {
+        state = s;
     }
 }
