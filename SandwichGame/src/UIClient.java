@@ -32,6 +32,18 @@ public class UIClient extends ConcreteObserver implements Runnable{
             commInput = m.payload.toString().split(" ");
             isUpdate = true;
             break;
+            case "acc":
+            System.out.println("accX: " + m.arrPaylaod[0] + " | accY: " + m.arrPaylaod[1] + " | accZ: " + m.arrPaylaod[2] + " | Timestamp: " + TCP_Client.timeStamp);
+            break;
+            case "dB":
+            System.out.println("Peak: " + m.payload + " | Timestamp: " + TCP_Client.timeStamp);
+            break;
+            case "heading":
+            System.out.println("headingX: " + m.arrPaylaod[0] + " | headingY: " + m.arrPaylaod[1] + " | headingZ: " + m.arrPaylaod[2] + " | Timestamp: " + TCP_Client.timeStamp);
+            break;
+            case "orientation":
+            System.out.println("Orientation: " + m.payload + " | Timestamp: " + TCP_Client.timeStamp);
+            break;
         }
     }
 
