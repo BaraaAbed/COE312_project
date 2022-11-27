@@ -3,6 +3,7 @@ public class Enemy {
     //initializing variables
     protected double health;
     protected double dmg;
+    protected String description;
 
     ///Fighting mechanics
     //Start fight

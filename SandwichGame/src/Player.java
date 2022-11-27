@@ -11,15 +11,16 @@ public class Player {
     private static ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
     private static Player instance;//singleton
-    private State state; // state design pattern
+    private State locationLockState; // state design pattern
 
     //Constructor
     private Player(){
         currentLocation = House.getInstance();
+        weapon = new LowDamageWeapon(); // starts with stone sword from cashier
         health = 100.0;
         dmg = 10.0;
         updateNearby();
-        state = new MapLockedState();
+        locationLockState = new MapLockedState();
     }
 
     //gets instance (for singleton)
@@ -95,16 +96,23 @@ public class Player {
 
     // go to next state (used in main/driver/ui)
     public void nextState() {
-        state.next(this);
+        locationLockState.next(this);
     }
 
     // print current state
     public void printStatus() {
-        state.printStatus();
+        locationLockState.printStatus();
     }
 
     // set the state (used by state children)
     public void setState(State s) {
-        state = s;
+        locationLockState = s;
+    }
+
+    // function to check nearby locations
+    public void checkNearby() {
+        for(int i=0; i<nearby.size();i++){
+            System.out.println(nearby.get(i));
+        }
     }
 }

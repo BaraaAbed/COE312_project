@@ -6,7 +6,7 @@ public class Road extends Location {
 
     //constructor
     private Road(){
-        description = "";
+        description = "There is a long road ahead. It seems conveniently connected to many of the city's landmarks.";
     }
 
     //gets instance (for singleton)
@@ -24,5 +24,10 @@ public class Road extends Location {
         nearby.add(House.getInstance());
         nearby.add(Sewers.getInstance());
         nearby.add(Supermarket.getInstance());
+    }
+
+    @Override
+    public String toString(){
+        return "Road";
     }
 }

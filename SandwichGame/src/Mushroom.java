@@ -2,7 +2,7 @@ public class Mushroom extends Ingredient {
     private static Mushroom instance;
 
     private Mushroom() {
-
+        description = "There seems to be a glowing mushroom behind one of these trees...";
     }
 
     //gets instance (for singleton)

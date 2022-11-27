@@ -7,7 +7,7 @@ public class Warehouse extends Location {
 
     //constructor
     private Warehouse(){
-        description = "";
+        description = "silence... The warehouse is dark and quiet, and you hear a suspicious sound...";
         items.add(Tomato.getInstance());
         enemy = Imposter.getInstance();
         dark = true;
@@ -29,5 +29,10 @@ public class Warehouse extends Location {
     public void getNearby(ArrayList<Location> nearby) {
         nearby.clear();
         nearby.add(Wilderness.getInstance());
+    }
+
+    @Override
+    public String toString(){
+        return "Warehouse";
     }
 }

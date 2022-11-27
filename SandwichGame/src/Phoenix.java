@@ -4,6 +4,7 @@ public class Phoenix extends Enemy {
     private Phoenix() {
         health = 100;
         dmg = 10;
+        description = "You have awoken the legendary phoenix! You will pay the price!";
     }
 
     //gets instance (for singleton)

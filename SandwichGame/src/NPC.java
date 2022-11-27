@@ -1,5 +1,10 @@
 
 public abstract class NPC {
-    //function for communication
-    public abstract void talk();
+
+    String description;
+
+    //description getter
+    public String getDescription(){
+        return description;
+    }
 }

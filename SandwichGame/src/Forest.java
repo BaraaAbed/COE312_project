@@ -6,7 +6,7 @@ public class Forest extends Location {
 
     //constructor
     private Forest(){
-        description = "";
+        description = "The forest is full of trees";
         items.add(new FireExtinguisher());
         items.add(Mushroom.getInstance());
         enemy = Gnome.getInstance();
@@ -25,4 +25,8 @@ public class Forest extends Location {
         nearby.add(Wilderness.getInstance());
     }
     
+    @Override
+    public String toString(){
+        return "Forest";
+    }
 }

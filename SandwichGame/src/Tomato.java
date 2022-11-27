@@ -2,7 +2,7 @@ public class Tomato extends Ingredient {
     private static Tomato instance;
 
     private Tomato() {
-
+        description = "Something red is glowing between the barrels in this warehouse...";
     }
 
     //gets instance (for singleton)

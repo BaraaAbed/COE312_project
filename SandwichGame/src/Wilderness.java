@@ -25,4 +25,9 @@ public class Wilderness extends Location {
         nearby.add(Cave.getInstance());
         nearby.add(Forest.getInstance());
     }
+
+    @Override
+    public String toString(){
+        return "Wilderness";
+    }
 }

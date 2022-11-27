@@ -3,6 +3,7 @@ public class Torch extends Item {
 
     Torch(){
         on = false;
+        description = "There is a torch on the ground at the entrance to the warehouse...it might be useful to see what's inside...";
     }
 
     public void use() {

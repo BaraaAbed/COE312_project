@@ -6,7 +6,7 @@ public class House extends Location {
 
     //constructor
     private House(){
-        description = "";
+        description = "This is your house, there is a fridge...if you are feeling hungry, then perhaps you should check what is inside.";
         items.add(new Fridge());
         items.add(Bread.getInstance());
     }
@@ -24,4 +24,9 @@ public class House extends Location {
         nearby.add(Road.getInstance());
     }
     
+    @Override
+    public String toString(){
+        return "House";
+    }
+
 }

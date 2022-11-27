@@ -1,13 +1,13 @@
 import java.util.Scanner;
 
-public class Commands extends ConcreteSubject implements Runnable {
+public class UI extends ConcreteSubject implements Runnable {
     //Variables
     public Thread t;
     private Scanner scan;
     private Message msg;
 
     //Constructor
-    public Commands(){
+    public UI(){
         t = new Thread(this);
         scan = new Scanner(System.in);
         msg = new Message(this, "Command", null);

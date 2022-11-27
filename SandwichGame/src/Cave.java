@@ -6,7 +6,7 @@ public class Cave extends Location {
     private boolean blocked; 
 
     //constructor
-    private Cave(){
+    private Cave() {
         description = "";
         items.add(Meat.getInstance());
         enemy = Phoenix.getInstance();
@@ -29,5 +29,10 @@ public class Cave extends Location {
     public void getNearby(ArrayList<Location> nearby) {
         nearby.clear();
         nearby.add(Wilderness.getInstance());
+    }
+
+    @Override
+    public String toString(){
+        return "Cave";
     }
 }

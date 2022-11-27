@@ -26,4 +26,9 @@ public class Kitchen extends Location {
         nearby.clear();
         nearby.add(Road.getInstance());
     }
+
+    @Override
+    public String toString(){
+        return "Kitchen";
+    }
 }

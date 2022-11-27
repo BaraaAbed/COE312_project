@@ -4,6 +4,7 @@ public class RatKing extends Enemy {
     private RatKing() {
         health = 100;
         dmg = 10;
+        description = "You have awoken the Rat King from his slumber on his throne! You will not get away with this!";
     }
 
     //gets instance (for singleton)

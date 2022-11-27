@@ -2,7 +2,7 @@ public class Sauce extends Ingredient {
     private static Sauce instance;
 
     private Sauce() {
-
+        description = "Behind Gordon Ramsay there appears to be a shining sauce...";
     }
 
     //gets instance (for singleton)

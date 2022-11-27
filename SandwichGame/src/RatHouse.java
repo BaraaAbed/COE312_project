@@ -23,4 +23,9 @@ public class RatHouse extends Location {
         nearby.clear();
         nearby.add(Sewers.getInstance());
     }
+
+    @Override
+    public String toString(){
+        return "Rat Castle";
+    }
 }

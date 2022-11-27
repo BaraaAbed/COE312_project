@@ -6,8 +6,8 @@ public class Supermarket extends Location {
 
     //constructor
     private Supermarket(){
-        description = "";
-        npcs.add(Cashier.getInstance());
+        description = "This is the local supermarket. You look around to find it unusually empty, almost as if you are the only customer. The only other person you can see is the cashier at the counter.";
+        npcs.add(Bob.getInstance());
     }
 
     //gets instance (for singleton)
@@ -21,5 +21,10 @@ public class Supermarket extends Location {
     public void getNearby(ArrayList<Location> nearby) {
         nearby.clear();
         nearby.add(Road.getInstance());
+    }
+
+    @Override
+    public String toString(){
+        return "Supermarket";
     }
 }

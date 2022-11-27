@@ -5,8 +5,8 @@ public class Farm extends Location {
     private static Farm instance; //singleton
 
     //constructor
-    private Farm(){
-        description = "";
+    private Farm() {
+        description = "The farm is filled with a variety of crops carrying delicious-looking fruits and vegetables, reminding you of your severe hunger. There seems to be special fencing around the lettuce crops, with a worn-down scarecrow in the middle.";
         items.add(new Torch());
         items.add(Lettuce.getInstance());
         enemy = Scarecrow.getInstance();
@@ -23,5 +23,10 @@ public class Farm extends Location {
     public void getNearby(ArrayList<Location> nearby) {
         nearby.clear();
         nearby.add(Wilderness.getInstance());
+    }
+
+    @Override
+    public String toString(){
+        return "Farm";
     }
 }
