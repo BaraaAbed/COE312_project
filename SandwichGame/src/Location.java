@@ -7,6 +7,12 @@ public abstract class Location {
     public Enemy enemy;//stores the enemy in this location
     public ArrayList<NPC> npcs;//stores the npcs that can be found in this location
 
+    //constructor
+    public Location(){
+        items = new ArrayList<Item>();
+        npcs = new ArrayList<NPC>();
+    }
+
     //Description getter
     public String getDescription(){
         return description;

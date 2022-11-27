@@ -20,7 +20,7 @@ public class RatHouse extends Location {
     //nearby function
     @Override
     public void getNearby(ArrayList<Location> nearby) {
-        nearby.clear();
+        if(!nearby.isEmpty())nearby.clear();
         nearby.add(Sewers.getInstance());
     }
 

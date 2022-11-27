@@ -101,6 +101,21 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public void run() {
         Player.currentLocation = House.getInstance();
         tutorial(player);
+        while(true){
+            switch(commInput[0]){
+                case "go":
+                    if(commInput[1].equalsIgnoreCase("to")){
+                        for(int x = 0; x < player.nearby.size(); x++){
+                            if(player.nearby.get(x).toString().equalsIgnoreCase(commInput[2])){
+                                Player.currentLocation = player.nearby.get(x);
+                                player.updateNearby();
+                                System.out.println("location updated");
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
         
 
     }

@@ -4,7 +4,7 @@ public class Player {
     //initialzing variables
     public static Location currentLocation;
     private static double health;
-    private ArrayList<Location> nearby;
+    public ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
     private Item equipped;
     private Weapon weapon; // strategy design pattern
@@ -15,6 +15,9 @@ public class Player {
 
     //Constructor
     private Player(){
+        nearby = new ArrayList<Location>();
+        inventory = new ArrayList<Item>();
+        ingredients = new ArrayList<Ingredient>();
         currentLocation = House.getInstance();
         weapon = new LowDamageWeapon(); // starts with stone sword from cashier
         health = 100.0;
