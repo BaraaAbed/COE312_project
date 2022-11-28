@@ -6,7 +6,7 @@ public class Forest extends Location {
 
     //constructor
     private Forest(){
-        description = "The forest is full of trees";
+        description = "The forest is dense and full of trees...beware of what may lie between the leaves!";
         items.add(new FireExtinguisher());
         items.add(Mushroom.getInstance());
         enemy = Gnome.getInstance();
