@@ -7,7 +7,7 @@ public class Cave extends Location {
 
     //constructor
     private Cave() {
-        description = "";
+        description = "The cave is big and dark...but there appears to be something big and glowing deep inside the cave";
         items.add(Meat.getInstance());
         enemy = Phoenix.getInstance();
         blocked = true; //fire not extinguished

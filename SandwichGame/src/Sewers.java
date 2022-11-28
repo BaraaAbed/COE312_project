@@ -6,7 +6,7 @@ public class Sewers extends Location {
 
     //constructor
     private Sewers(){
-        description = "";
+        description = "The sewers that lead to the castle are infested with rats...run quickly through it before they get you!";
         enemy = RatKing.getInstance();
     }
 

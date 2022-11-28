@@ -6,7 +6,7 @@ public class Wilderness extends Location {
 
     //constructor
     private Wilderness(){
-        description = "";
+        description = "This is the wilderness. You can get to many locations from here.";
     }
 
     //gets instance (for singleton)
