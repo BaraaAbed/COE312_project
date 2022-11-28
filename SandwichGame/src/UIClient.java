@@ -200,7 +200,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                             found = true;
                         }
                     }
-                    if (!found) System.out.println("Equip what now? I think missed what you said there.");
+                    if (!found) System.out.println("Equip what now? I missed what you said there.");
                     break;
                     case "unequip":
                     player.unequip();
