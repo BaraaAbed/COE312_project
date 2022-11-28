@@ -3,7 +3,7 @@ public class Torch extends Item {
 
     Torch(){
         on = false;
-        description = "There is a torch on the ground at the entrance to the warehouse...it might be useful to see what's inside...";
+        description = "There is a torch on the ground at the entrance to the warehouse...it might be useful for later, maybe you should pick it up.";
     }
 
     public void use() {
@@ -15,5 +15,10 @@ public class Torch extends Item {
             System.out.println("Torch turned off.");
             on = false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "torch";
     }
 }

@@ -65,6 +65,11 @@ public class Player {
         equipped = null;
     }
 
+    //getter for equipped
+    public Item getEquipped(){
+        return equipped;
+    }
+
     //updates nearby to the arraylist of the current location
     public void updateNearby(){
         currentLocation.getNearby(nearby);
@@ -77,7 +82,8 @@ public class Player {
             if(x == inventory.size()-1) System.out.print(inventory.get(x) + " ]\n");
             else System.out.print(inventory.get(x) + ", ");
         }
-        System.out.println("Currently Equipped: " + equipped);
+        if(equipped != null) System.out.println("Currently Equipped: " + equipped);
+        else System.out.println("Currently Equipped: none");
     }
 
     //adds item to inv
@@ -90,6 +96,16 @@ public class Player {
     public void removeItem(Item item){
         if(inventory.contains(item)) inventory.remove(item);
         else System.out.println(item + " is not in the inventory");
+    }
+
+    //check if inv empty
+    public boolean isInvEmpty(){
+        return inventory.isEmpty();
+    }
+    
+    // inv getter
+    public ArrayList<Item> getInv(){
+        return inventory;
     }
 
     // getter for ingredients array
@@ -116,6 +132,18 @@ public class Player {
     public void checkNearby() {
         for(int i=0; i<nearby.size();i++){
             System.out.println(nearby.get(i));
+        }
+    }
+
+    //function that prints descriptions when user inputs look around
+    public void look(){
+        System.out.println(currentLocation.getDescription());
+        if (currentLocation.enemy != null) System.out.println(currentLocation.enemy.description);
+        for(int i=0; i<currentLocation.items.size() && !currentLocation.items.isEmpty();i++){
+            System.out.println(currentLocation.items.get(i).getDescription());
+        }
+        for(int i=0; i<currentLocation.npcs.size() && !currentLocation.npcs.isEmpty();i++){
+            System.out.println(currentLocation.npcs.get(i).getDescription());
         }
     }
 }

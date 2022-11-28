@@ -6,7 +6,7 @@ public class House extends Location {
 
     //constructor
     private House(){
-        description = "This is your house, there is a fridge...if you are feeling hungry, then perhaps you should check what is inside.";
+        description = "This is your house. This is where the whole journey started, and where you plan to end it.";
         items.add(new Fridge());
         items.add(Bread.getInstance());
     }

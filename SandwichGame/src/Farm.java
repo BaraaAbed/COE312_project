@@ -6,7 +6,7 @@ public class Farm extends Location {
 
     //constructor
     private Farm() {
-        description = "The farm is filled with a variety of crops carrying delicious-looking fruits and vegetables, reminding you of your severe hunger. There seems to be special fencing around the lettuce crops, with a worn-down scarecrow in the middle.";
+        description = "You are in the Abandoned Farm. The atmoshphere here is bit too spooky for your liking, you should do what you have to do here leave as soon as possible.";
         items.add(new Torch());
         items.add(Lettuce.getInstance());
         enemy = Scarecrow.getInstance();

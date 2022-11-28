@@ -35,7 +35,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public void update(Message m) {
         switch (m.topic){
             case "Command":
-            commInput = m.payload.toString().split(" ");
+            commInput = (m.payload.toString() + " bla bla bla").split(" ");
             isUpdate = true;
             break;
             case "acc":
@@ -70,6 +70,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
         while(!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("fridge"))){
             Thread.sleep(100);
         }
+        player.addItem(Bread.getInstance());
+        Player.currentLocation.items.remove(Bread.getInstance());
         System.out.println("You opened the fridge. There you find 2 peices of what you assume is bread? It looks like bread, feels like bread, and smells like bread" +
         "However, the color of this \'bread\' is golden. The problem is that you don't remember seeing this bread in your fridge before."+
         "Not only that, but it seems like there is some kind of note right under one of the pieces. All you understand from this note though is the first 2 words:"+
@@ -101,6 +103,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         System.out.println("Bob: Look who we have here. Seems like you have something to ask me, right? Or else, you would've never left your house.\n"+
         "You explain what you found and he seems very interested. He tells you to leave it to him and come back in a second.\n" +
         "(You have completed the tutorial, to continue with the game, interact with Bob again)");
+        commInput[0] = "bla";
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
         }
@@ -117,33 +120,102 @@ public class UIClient extends ConcreteObserver implements Runnable{
 
     @Override
     public void run() {
-        try{
-            Player.currentLocation = House.getInstance();
+        Player.currentLocation = House.getInstance();
+        try {
             tutorial(player);
-            while(true){
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
+        while(true){
+            try{
                 while(!isUpdate){
                     Thread.sleep(100);
                 }
-                switch(commInput[0]){
+                isUpdate = false;
+                boolean found = false;
+                switch(commInput[0].toLowerCase()){
                     case "go":
-                        if(commInput[1].equalsIgnoreCase("to")){
-                            for(int x = 0; x < player.nearby.size(); x++){
-                                if(player.nearby.get(x).toString().equalsIgnoreCase(commInput[2])){
-                                    Player.currentLocation = player.nearby.get(x);
-                                    player.updateNearby();
-                                    System.out.println("location updated");
-                                }
+                    if(commInput[1].equalsIgnoreCase("to")){
+                        for(int x = 0; x < player.nearby.size() && !found; x++){
+                            if(player.nearby.get(x).toString().equalsIgnoreCase(commInput[2])){
+                                Player.currentLocation = player.nearby.get(x);
+                                player.updateNearby();
+                                found = true;
                             }
                         }
-                        break;
+                        if (!found) System.out.println("Go where now? I think missed what you said there.");
+                    } else System.out.println("(Hint: Try \"go to <Location>\"");
+                    break;
+                    case "nearby":
+                    player.checkNearby();
+                    break;
+                    case "use":
+                    for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
+                        if(Player.currentLocation.items.get(x).toString().equalsIgnoreCase(commInput[1])){
+                            Player.currentLocation.items.get(x).use();
+                            found = true;
+                        } 
+                    }
+                    if (!found) {
+                        if(player.getEquipped().toString().equals(commInput[1])) player.getEquipped().use();
+                        else System.out.println("Use what? I think missed what you said there.");
+                    }
+                    break;
+                    case "look":
+                    if(commInput[1].equalsIgnoreCase("around")){
+                        player.look();
+                    } else System.out.println("(Hint: Try typing \"look around\")");
+                    break;
+                    case "take":
+                    for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
+                        if(Player.currentLocation.items.get(x).toString().equalsIgnoreCase(commInput[1])){
+                            if(Player.currentLocation.items.get(x).takable){
+                                player.addItem(Player.currentLocation.items.get(x));
+                                Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
+                            }
+                            found = true;
+                        } 
+                    }
+                    if (!found) System.out.println("Take what now? I think missed what you said there.");
+                    break;
+                    case "inventory":
+                    if(!player.isInvEmpty()) player.showInv();
+                    else System.out.println("Wow, to be able to break the game and get an empty inventory, I'm impressed."); 
+                    break;
+                    case "talk":
+                    if(commInput[1].equalsIgnoreCase("to")){
+                        for(int x = 0; x < Player.currentLocation.npcs.size() && !found; x++){
+                            if(Player.currentLocation.npcs.get(x).toString().equalsIgnoreCase(commInput[2])){
+                                System.out.println("Bob communication implementation here");
+                                //Player.currentLocation.npcs.get(x).talk(); //for bob
+                                found = true;
+                            } 
+                        }
+                    } else System.out.println("(Hint: Try typing \"Talk to <name>\")");
+                    break;
+                    case "equip": 
+                    for(int x = 0; x < player.getInv().size() && !found; x++){
+                        if(player.getInv().get(x).toString().equalsIgnoreCase(commInput[1])){
+                            player.equip(player.getInv().get(x));
+                            found = true;
+                        }
+                    }
+                    if (!found) System.out.println("Equip what now? I think missed what you said there.");
+                    break;
+                    case "unequip":
+                    player.unequip();
+                    break;
+                    default:
+                    System.out.println("Ha? I thought I heard something. Must've been a fly. Those pesky flies!");
                 }
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            } catch (ArrayIndexOutOfBoundsException Ae){
+                //do nothing
+            } catch (NullPointerException ne){
+                //do nothing
             }
-        } catch (InterruptedException e){
-            e.printStackTrace();
+                
         }
-        
-
     }
-
-    
 }
