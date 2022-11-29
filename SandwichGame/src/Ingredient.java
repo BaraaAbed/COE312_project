@@ -3,5 +3,6 @@ public abstract class Ingredient extends Item {
 
     Ingredient(){
         found = false;
+        takable = false;
     }
 }

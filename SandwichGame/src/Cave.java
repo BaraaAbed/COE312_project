@@ -3,11 +3,11 @@ import java.util.ArrayList;
 public class Cave extends Location {
     //initializing variables
     private static Cave instance; //singleton
-    private boolean blocked; 
+    public boolean blocked; 
 
     //constructor
     private Cave() {
-        description = "The cave is big and dark...but there appears to be something big and glowing deep inside the cave";
+        description = "After you extinguished the fire from the cave, you can finally have a look around. The cave is still very bright and you can see flames deep into the cave.";
         items.add(Meat.getInstance());
         enemy = Phoenix.getInstance();
         blocked = true; //fire not extinguished
@@ -29,6 +29,12 @@ public class Cave extends Location {
     public void getNearby(ArrayList<Location> nearby) {
         if(!nearby.isEmpty())nearby.clear();
         nearby.add(Wilderness.getInstance());
+    }
+
+    @Override
+    public String getDescription() {
+        if(blocked) return "The floor is filled with flames. If you don't get rid of it soon, you will burn to death.";
+        else return description;
     }
 
     @Override

@@ -19,9 +19,11 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     static int orientation; //ranges from 1 to 6
     static double heading; //angle ranges from 0 to 360
     static double[] headingXYZ;
+    static double[] gyro;
     TCP_Client (){
         this.acc = new double[3]; //X, Y, Z
         this.headingXYZ = new double[3]; //X, Y, Z
+        this.gyro = new double[3]; //X, Y, Z
         Scanner scan = new Scanner(System.in);
         String c = "bla";
         do {
@@ -73,6 +75,9 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 headingXYZ[0] = Double.parseDouble((String) jsonObject.get("locationHeadingX"));
                 headingXYZ[1] = Double.parseDouble((String) jsonObject.get("locationHeadingY"));
                 headingXYZ[2] = Double.parseDouble((String) jsonObject.get("locationHeadingZ"));
+                gyro[0] = Double.parseDouble((String) jsonObject.get("gyroRotationX"));
+                gyro[1] = Double.parseDouble((String) jsonObject.get("gyroRotationY"));
+                gyro[2] = Double.parseDouble((String) jsonObject.get("gyroRotationZ"));
                 //sending messages depending on bool values in UIClient
                 if(UIClient.getAcc == true)
                 {
@@ -92,6 +97,11 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 if(UIClient.getOrientation == true)
                 {
                     msg = new Message(this, "orientation", orientation);
+                    publishMessage(msg);
+                }
+                if(UIClient.getGyro == true)
+                {
+                    msg = new Message(this, "orientation", gyro);
                     publishMessage(msg);
                 }
 			}
@@ -170,6 +180,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         avgAcc[2] = totalAcc[2]/(double) x;
         return avgAcc;
     }
+    //anything +/- 2 is considered a large movement
     //useful for dodging (for +ve axis)
     static boolean peakAccAboveThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
@@ -203,5 +214,108 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         }
         if (minAcc < threshold) return true;
         else return false;
+    }
+    //anything +/- 10 is considered a flick for gyro
+    //useful for sabotage (for +ve axis)
+    static boolean peakGyroAboveThreshold(char dir, double duration, double threshold) {
+        int index = getIndexFromDir(dir);
+        if (index == 3) return false;
+        double initTime = System.currentTimeMillis();
+        double maxGyro = 0; 
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            if (gyro[index] > maxGyro) maxGyro = gyro[index];
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        if (maxGyro > threshold) return true;
+        else return false;
+    }
+    //useful for sabotage (for -ve axis)
+    static boolean minGyroBelowThreshold(char dir, double duration, double threshold) {
+        int index = getIndexFromDir(dir);
+        if (index == 3) return false;
+        double initTime = System.currentTimeMillis();
+        double minGyro = 0;
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            if (gyro[index] < minGyro) minGyro = gyro[index];
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        if (minGyro < threshold) return true;
+        else return false;
+    }
+    //Sound value is always negative where 0 is full sound. Good threshold is -25 for silence (will change depending on environment)
+    //useful for detecting sound
+    static boolean peakSoundBelowThreshold(double duration, double threshold) {
+        double initTime = System.currentTimeMillis();
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            if (dBpeak > threshold) return false;
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        return true;
+    }
+    //useful for putting ingredients
+    //Current pattern: tilt device to "landscape left" -> tilt device to "landscape right" -> move device down
+    //ingName used to print. pass in legendary X
+    //make sure duration is long (like maybe 10 or 20 secs)
+    static boolean putIngredient(double duration, String ingName) {
+        double initTime = System.currentTimeMillis();
+        double bla = 0;
+        boolean LL = false;
+        boolean LR = false;
+        boolean shake = false;
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            if (!LL && !LR && !shake) {
+                if (orientation == 3) {
+                    LL = true;
+                    System.out.println("You picked up the " + ingName + "! Put it on the sandwich before its too late.");
+                    bla = System.currentTimeMillis();
+                }
+            }
+            else if (!LR && !shake) {
+                while ((System.currentTimeMillis() - bla) < 1000) {
+                    if (orientation == 4) {
+                        LR = true;
+                        bla = 0;
+                    }
+                }
+                if (LR) {
+                    System.out.println("The " + ingName + " is in position. You must exert great force to place it!");
+                    bla = System.currentTimeMillis();
+                }
+                else {
+                    System.out.println("You were too late! The " + ingName + " teleported back to your inventory!");
+                    LL = false;
+                }
+            }
+            else if (!shake) {
+                if (peakAccAboveThreshold('X', 0.5, 5.0)) {
+                    System.out.println("The " + ingName + " has been placed succesfully!");
+                    bla = System.currentTimeMillis();
+                    shake = true;
+                }
+                else {
+                    System.out.println("Come on. You need to exert more force than that to place the " + ingName + "!");
+                    LL = false;
+                    LR = false;
+                }
+            }
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        return false;
     }
 }

@@ -2,7 +2,7 @@ public class Meat extends Ingredient {
     private static Meat instance;
 
     private Meat() {
-        description = "The legendary glowing phoenix in the cave may be the key to getting the legendary meat...";
+        description = "The legendary phoenix in the cave may be the key to getting the legendary meat...";
     }
 
     //gets instance (for singleton)

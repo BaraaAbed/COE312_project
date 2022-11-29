@@ -5,7 +5,11 @@ public class FireExtinguisher extends Item {
     }
 
     public void use() {
-        System.out.println("Fire extinguisher put out the fire! Path is clear.");
+        if(Player.currentLocation == Cave.getInstance()) {
+            System.out.println("Fire extinguisher put out the fire! Path is clear.");
+            Cave.getInstance().blocked = false;
+        }
+        else System.out.println("No fire to put out");
     }
 
     @Override

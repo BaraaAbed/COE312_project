@@ -57,6 +57,7 @@ public class Player {
     public void death(){
         Player.health = 100.0;// change initial health if you change this
         currentLocation = House.getInstance();
+        updateNearby();
     }
 
     // set weapon strategy
