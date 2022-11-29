@@ -13,6 +13,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public static boolean getDB;
     public static boolean getHeading;
     public static boolean getOrientation;
+    public static boolean getGyro;
     private Player player;
     private Scanner scan;
     private Random rand;
@@ -200,10 +201,26 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         while(true){
             try{
+                boolean saved = false;
                 if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
                     System.out.println("Even though you knew you shouldn't, you still did it. A moment later, you feel something hit you hard in the head. Then, everything went blank.\n" +
                     "You died. Maybe you should curb your curiousity a little next time.");
                     player.death();
+                }
+                if(Player.currentLocation == Cave.getInstance() && Cave.getInstance().blocked){
+                    if( player.getEquipped() instanceof FireExtinguisher){
+                        double intitialTime = System.currentTimeMillis();
+                        while(System.currentTimeMillis() - intitialTime < 5000.0 && (!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")))){
+                            Thread.sleep(100);
+                        }
+                        if(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")) saved = true;
+                    }
+                    if(!saved) {
+                        System.out.println("You have been burnt to death");
+                        player.death();
+                        isUpdate = false;
+                    }
+                    else Cave.getInstance().blocked = false;
                 }
                 while(!isUpdate){
                     Thread.sleep(100);
@@ -221,9 +238,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                     } else {
                                         if(Torch.on){
                                             Player.currentLocation = player.nearby.get(x);
+                                            System.out.println(Player.currentLocation.getDescription());
                                         } else System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
                                     }
-                                } else Player.currentLocation = player.nearby.get(x);
+                                } else {
+                                    Player.currentLocation = player.nearby.get(x);
+                                    System.out.println(Player.currentLocation.getDescription());
+                                }
                                 if(player.nearby.get(x) == Forest.getInstance()) {
                                     Forest.getInstance().pathCrossed = false;
                                     Mushroom.getInstance().takable = false;
