@@ -43,7 +43,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 }
             } while (!(c.equalsIgnoreCase("y")) && !(c.equalsIgnoreCase("n")));
         } while(!(c.equalsIgnoreCase("y")));
-        scan.close();
         msg = new Message(this, null, null);
         parser = new JSONParser();
         t = new Thread(this);

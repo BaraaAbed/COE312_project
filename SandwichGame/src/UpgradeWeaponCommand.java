@@ -12,6 +12,7 @@ public class UpgradeWeaponCommand implements Command {
             if(p.getWeapon() instanceof LowDamageWeapon){
                 p.setWeapon(new MediumDamageWeapon());
                 p.deductCoins(upgradePrice);
+                p.sword = "Iron sword";
                 System.out.println("Bob: Congratulations! You have upgraded your weapon from a stone sword to an iron sword "+
                 "with a damage multiplier of "+new MediumDamageWeapon().getDmgMultiplier()+"!");
                 System.out.println("Remaining coins: "+p.getCoins());
@@ -19,6 +20,7 @@ public class UpgradeWeaponCommand implements Command {
             else if(p.getWeapon() instanceof MediumDamageWeapon){
                 p.setWeapon(new HighDamageWeapon());
                 p.deductCoins(upgradePrice);
+                p.sword = "Diamond sword";
                 System.out.println("Bob: Congratulations! You have upgraded your weapon from an iron sword to a diamond sword "+
                 "with a damage multiplier of "+new HighDamageWeapon().getDmgMultiplier()+"!");
                 System.out.println("You now possess the highest damage weapon in the game! Use it wisely...");

@@ -7,6 +7,7 @@ public class Player {
     public ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
     private Item equipped;
+    public String sword;
     public Weapon weapon; // strategy design pattern
     private static ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
@@ -16,6 +17,7 @@ public class Player {
 
     //Constructor
     private Player(){
+        sword = "Stone sword";
         nearby = new ArrayList<Location>();
         inventory = new ArrayList<Item>();
         ingredients = new ArrayList<Ingredient>();
@@ -90,6 +92,8 @@ public class Player {
         }
         if(equipped != null) System.out.println("Currently Equipped: " + equipped);
         else System.out.println("Currently Equipped: none");
+        System.out.println("Weapon: " + sword);
+
     }
 
     //adds item to inv

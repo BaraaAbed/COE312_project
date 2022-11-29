@@ -138,8 +138,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
         System.out.println("Bob: I translated everything on the note, so here have a look. If youhave any questions, I am right here. Also, you are gonna need this." +
         "After saying that he gave you a stone sword."+
         "Bob: After you beat some bosses, come see me again to updgrade the sword.");
-        //player.weapon = new Weapon();
-        player.addItem(player.weapon);
         player.nextState();
         isUpdate = true;
     }
@@ -161,6 +159,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         while(true){
             try{
+                if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
+                    //player dies by imposter
+                }
                 while(!isUpdate){
                     Thread.sleep(100);
                 }
@@ -171,7 +172,15 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     if(commInput[1].equalsIgnoreCase("to")){
                         for(int x = 0; x < player.nearby.size() && !found; x++){
                             if(player.nearby.get(x).toString().equalsIgnoreCase(commInput[2])){
-                                Player.currentLocation = player.nearby.get(x);
+                                if(player.nearby.get(x) == Warehouse.getInstance()){
+                                    if(!(player.getEquipped() instanceof Torch)){
+                                        System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
+                                    } else {
+                                        if(Torch.on){
+                                            Player.currentLocation = player.nearby.get(x);
+                                        } else System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
+                                    }
+                                } else Player.currentLocation = player.nearby.get(x);
                                 player.updateNearby();
                                 found = true;
                             }

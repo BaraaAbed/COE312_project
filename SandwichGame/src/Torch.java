@@ -1,5 +1,5 @@
 public class Torch extends Item {
-    private boolean on;
+    public static boolean on;
 
     Torch(){
         on = false;
