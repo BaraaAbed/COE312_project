@@ -23,7 +23,7 @@ public class Player {
         ingredients = new ArrayList<Ingredient>();
         currentLocation = House.getInstance();
         weapon = new LowDamageWeapon(); // starts with stone sword from cashier
-        health = 100.0;
+        health = 100.0; //change health in death function if you change this
         dmg = 10.0;
         updateNearby();
         locationLockState = new MapLockedState();
@@ -51,6 +51,12 @@ public class Player {
     public void attack(){
         double totalDmg = dmg*weapon.getDmgMultiplier(); // using weapon strategy
         UIClient.fightingEnemy.takeDmg(totalDmg);
+    }
+
+    //death stuff
+    public void death(){
+        Player.health = 100.0;// change initial health if you change this
+        currentLocation = House.getInstance();
     }
 
     // set weapon strategy

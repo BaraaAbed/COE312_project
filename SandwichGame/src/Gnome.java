@@ -12,4 +12,9 @@ public class Gnome extends Enemy {
         if(instance == null) instance = new Gnome();
         return instance;
     }
+
+    @Override
+    public String toString() {
+        return "Gnome";
+    }
 }

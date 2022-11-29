@@ -21,7 +21,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     //constructor
     public UIClient(ArrayList<ConcreteSubject> subjects){
         super(subjects);
-        rand = new Random();
+        rand = new Random(System. currentTimeMillis());
         commInput = "lol".split(" ");
         getAcc = false;
         scan = new Scanner(System.in);
@@ -63,7 +63,48 @@ public class UIClient extends ConcreteObserver implements Runnable{
             //hecks kitchen fight
             break;
             case "Gnome":
-            //maze thing
+            int counter = 0;
+            ArrayList<Integer> paths = new ArrayList<Integer>();
+            for (int x = 0; x < 5; x++){
+                paths.add(rand.nextInt(2));
+            }
+            System.out.println("You are just about approach the gnome when all of a sudden you hear:\n"
+            +"Welcome to the path of the GNOME! As you can see, there are two paths up ahead. The rules are simple, you have to choose the path that doesn't have a gnome waiting there." 
+            +"To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast three times. Otherwise, you will die. The path of the gnome is randomized, so good luck, beacuse you will need it.");
+            try{
+                for(int x = 0; x < paths.size() && counter < 3; x++){
+                    isUpdate = false;
+                    System.out.println("There are two paths ahead, choose right or left.");
+                    while(!(commInput[0].equalsIgnoreCase("right") || commInput[0].equalsIgnoreCase("left"))){ 
+                        Thread.sleep(100);
+                    }
+                    if((commInput[0].equalsIgnoreCase("right") && paths.get(x) == 1) || (commInput[0].equalsIgnoreCase("left") && paths.get(x) == 0)){
+                        System.out.println("You walk through your chosen path nervously. Thankfully, it seems you lucked out.");
+                    }
+                    else if(counter < 2){
+                        System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with a pretty bad injury."
+                        +" Thankfully, it also pushed you forward, where you coincidentally landed at the end of the path. You look behind you with lingering fear. However, it doesn't seem like the gnome is going to chase you... yet." 
+                        + " You should be careful next time, you won't always be this lucky.");
+                        counter++;
+                    } else { //counter == 2
+                        System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury."
+                        + "This is the third time, and you can feel it is the last as well. The accumilation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open" +
+                        "just when when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
+                        "You have been gnomed to death." );
+                        player.death();
+                        isUpdate = false;
+                        counter++;
+                    }
+                    commInput[0] = "";
+                }
+                if (counter < 3){
+                    System.out.println("You finally crossed the paths, and you can see the magic mushroom right there. Just when you were worrying about how to leave, you suddenly notice that there is only one path behind you."
+                    +" Not only that, but it seems to be connected directly to the exit. That means you won't have to rely on luck to leave this place, which makes you sigh in relief.");
+                    Forest.getInstance().pathCrossed = true;
+                    Mushroom.getInstance().takable = true;
+                    isUpdate = false;
+                }
+            } catch (InterruptedException e) {}
             break;
             default:
             System.out.println("You have started a fight with " + fightingEnemy.toString());
@@ -111,7 +152,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         Player.currentLocation = Road.getInstance();
         player.updateNearby();
-        System.out.println("It seems like you haven't been out in a while, since can't remember the way to the super market. Maybe you should stop ordering your groceries from online every now and then.\n" + 
+        System.out.println("It seems like you haven't been out in a while, since you can't remember the way to the supermarket. Maybe you should stop ordering your groceries from online every now and then.\n" + 
         "(Hint: type \"nearby\")");
         while(!(commInput[0].equalsIgnoreCase("nearby"))){
             Thread.sleep(100);
@@ -160,7 +201,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
         while(true){
             try{
                 if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
-                    //player dies by imposter
+                    System.out.println("Even though you knew you shouldn't, you still did it. A moment later, you feel something hit you hard in the head. Then, everything went blank.\n" +
+                    "You died. Maybe you should curb your curiousity a little next time.");
+                    player.death();
                 }
                 while(!isUpdate){
                     Thread.sleep(100);
@@ -181,6 +224,10 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         } else System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
                                     }
                                 } else Player.currentLocation = player.nearby.get(x);
+                                if(player.nearby.get(x) == Forest.getInstance()) {
+                                    Forest.getInstance().pathCrossed = false;
+                                    Mushroom.getInstance().takable = false;
+                                }
                                 player.updateNearby();
                                 found = true;
                             }
@@ -212,9 +259,14 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
                         if(Player.currentLocation.items.get(x).toString().equalsIgnoreCase(commInput[1])){
                             if(Player.currentLocation.items.get(x).takable){
+                                if (Player.currentLocation.items.get(x) instanceof Ingredient) {
+                                    player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
+                                    System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
+                                    player.addCoins(10); // ahmad changing later
+                                }
                                 player.addItem(Player.currentLocation.items.get(x));
                                 Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
-                            }
+                            } else System.out.println("This item can't be taken");
                             found = true;
                         } 
                     }

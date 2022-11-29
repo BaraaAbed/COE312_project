@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Bob extends NPC {
@@ -28,28 +29,31 @@ public class Bob extends NPC {
     }
 
     public void talk() {
-        int option;
+        int option = 999;
         Scanner scan = new Scanner(System.in);
 
         do {
-            System.out.println("Bob's Menu");
-            System.out.println("1. Show legendary ingredients locations");
-            System.out.println("2. Upgrade sword");
-            System.out.println("3. Close menu");
-            System.out.println("Choose option: ");
-            option = scan.nextInt();
-            scan.nextLine(); // to remove extra new line
+            try{
+                System.out.println("Bob's Menu");
+                System.out.println("1. Show legendary ingredients locations");
+                System.out.println("2. Upgrade sword");
+                System.out.println("3. Close menu");
+                System.out.println("Choose option: ");
+                option = scan.nextInt();
+                scan.nextLine(); // to remove extra new line
 
-            if(option == 1 || option == 2){
-                chooseOption(option);
+                if(option == 1 || option == 2){
+                    chooseOption(option);
+                }
+                else if(option == 3){
+                    System.out.println("Closing menu...");
+                }
+                else {
+                    System.out.println("Invalid option entered. Please enter another option.");
+                }
+            } catch (InputMismatchException in) {
+                System.out.println("Seems like you have nothing to talk about. How about you get lost then."); option = 3;
             }
-            else if(option == 3){
-                System.out.println("Closing menu...");
-            }
-            else {
-                System.out.println("Invalid option entered. Please enter another option.");
-            }
-
         } while (option != 3);
     }
 }

@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class UI extends ConcreteSubject implements Runnable {
     //Variables
     public Thread t;
-    private Scanner scan;
+    public static Scanner scan;
     private Message msg;
 
     //Constructor
