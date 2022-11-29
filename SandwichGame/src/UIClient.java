@@ -186,8 +186,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     if(commInput[1].equalsIgnoreCase("to")){
                         for(int x = 0; x < Player.currentLocation.npcs.size() && !found; x++){
                             if(Player.currentLocation.npcs.get(x).toString().equalsIgnoreCase(commInput[2])){
-                                System.out.println("Bob communication implementation here");
-                                //Player.currentLocation.npcs.get(x).talk(); //for bob
+                                Player.currentLocation.npcs.get(x).talk();
+                                isUpdate = false;
                                 found = true;
                             } 
                         }

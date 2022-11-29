@@ -12,6 +12,7 @@ public class Player {
     private double dmg;//base dmg
     private static Player instance;//singleton
     private State locationLockState; // state design pattern
+    private int coins; // keep track of num of coins
 
     //Constructor
     private Player(){
@@ -53,6 +54,11 @@ public class Player {
     // set weapon strategy
     public void setWeapon(Weapon w){
         weapon = w;
+    }
+
+    // getter for weapon (cashier needs it to check the current weapon before upgrading)
+    public Weapon getWeapon(){
+        return weapon;
     }
 
     //equip item
@@ -128,6 +134,10 @@ public class Player {
         locationLockState = s;
     }
 
+    public State getState(){
+        return locationLockState;
+    }
+
     // function to check nearby locations
     public void checkNearby() {
         for(int i=0; i<nearby.size();i++){
@@ -145,5 +155,17 @@ public class Player {
         for(int i=0; i<currentLocation.npcs.size() && !currentLocation.npcs.isEmpty();i++){
             System.out.println(currentLocation.npcs.get(i).getDescription());
         }
+    }
+
+    public void addCoins(int numcoins) {
+        coins += numcoins;
+    }
+
+    public void deductCoins(int numcoins) {
+        coins -= numcoins;
+    }
+
+    public int getCoins() {
+        return coins;
     }
 }
