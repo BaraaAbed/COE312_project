@@ -27,7 +27,7 @@ public class Bob extends NPC {
         commands.get(option - 1).execute();
     }
 
-    public void menu() {
+    public void talk() {
         int option;
         Scanner scan = new Scanner(System.in);
 

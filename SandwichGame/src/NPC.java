@@ -1,4 +1,3 @@
-
 public abstract class NPC {
 
     String description;
@@ -7,4 +6,6 @@ public abstract class NPC {
     public String getDescription(){
         return description;
     }
+
+    abstract public void talk();
 }
