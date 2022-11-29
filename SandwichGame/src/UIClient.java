@@ -53,6 +53,25 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
     }
 
+    //fight funciton
+    private void fight(Player player, Enemy enemy){
+        switch(enemy.toString()){
+            case "Gordon":
+            //hecks kitchen fight
+            break;
+            case "Gnome":
+            //maze thing
+            break;
+            default:
+            System.out.println("You have started a fight with " + enemy.toString());
+            while(player.getHealth() > 0.0 && enemy.getHealth() > 0.0){
+                System.out.println("You are on the offense, slash your sword to attack him");
+                
+            }
+        }
+    }
+
+    //tutorial
     private void tutorial(Player player) throws InterruptedException{
         System.out.println("Welcome to THE LEGEND OF THE SANDWICH!\n" + 
         "This game was made by the collaborative efforts of:\n" +
