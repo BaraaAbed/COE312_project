@@ -7,7 +7,7 @@ public class Player {
     public ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
     private Item equipped;
-    private Weapon weapon; // strategy design pattern
+    public Weapon weapon; // strategy design pattern
     private static ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
     private static Player instance;//singleton

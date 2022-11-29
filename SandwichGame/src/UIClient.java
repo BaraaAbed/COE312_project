@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class UIClient extends ConcreteObserver implements Runnable{
@@ -14,11 +15,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public static boolean getOrientation;
     private Player player;
     private Scanner scan;
+    private Random rand;
     
 
     //constructor
     public UIClient(ArrayList<ConcreteSubject> subjects){
         super(subjects);
+        rand = new Random();
         commInput = "lol".split(" ");
         getAcc = false;
         scan = new Scanner(System.in);
@@ -54,8 +57,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
     }
 
     //fight funciton
-    private void fight(Player player, Enemy enemy){
-        switch(enemy.toString()){
+    private void fight(Player player) throws InterruptedException{
+        switch(fightingEnemy.toString()){
             case "Gordon":
             //hecks kitchen fight
             break;
@@ -63,10 +66,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
             //maze thing
             break;
             default:
-            System.out.println("You have started a fight with " + enemy.toString());
-            while(player.getHealth() > 0.0 && enemy.getHealth() > 0.0){
+            System.out.println("You have started a fight with " + fightingEnemy.toString());
+            while(player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
                 System.out.println("You are on the offense, slash your sword to attack him");
-                
+                if(TCP_Client.getAvgAcc(3)[0] > 15.0){
+                    System.out.println("Your slash hit! " + fightingEnemy.toString() + " has taken damage. Now get ready to dodge!");
+                    player.attack();
+                }
+                Thread.sleep(rand.nextInt(1000,3000));
+                System.out.println(fightingEnemy + " is attacking! Dodge quick!");
+                //if dodged thingy
             }
         }
     }
@@ -126,6 +135,11 @@ public class UIClient extends ConcreteObserver implements Runnable{
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
         }
+        System.out.println("Bob: I translated everything on the note, so here have a look. If youhave any questions, I am right here. Also, you are gonna need this." +
+        "After saying that he gave you a stone sword."+
+        "Bob: After you beat some bosses, come see me again to updgrade the sword.");
+        //player.weapon = new Weapon();
+        player.addItem(player.weapon);
         player.nextState();
         isUpdate = true;
     }
@@ -220,6 +234,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         }
                     }
                     if (!found) System.out.println("Equip what now? I missed what you said there.");
+                    break;
+                    case "fight":
+                    fightingEnemy = Player.currentLocation.enemy;
+                    if (fightingEnemy != null){
+                        fight(player);
+                    } else System.out.println("There is no enemy to fight here, how about you go punch a wall instead.");
                     break;
                     case "unequip":
                     player.unequip();
