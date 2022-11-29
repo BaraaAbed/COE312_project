@@ -1,5 +1,7 @@
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
+
 import org.json.simple.*;
 import org.json.simple.parser.*;
 import java.io.*;
@@ -11,17 +13,37 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     int port;
     Thread t;
     JSONParser parser;
-    double[] acc;
+    static double[] acc;
     static double timeStamp;
-    double dBpeak;
-    int orientation; //ranges from 1 to 6
-    double heading; //angle ranges from 0 to 360
-    double[] headingXYZ;
-    TCP_Client (String ip, int port){
+    static double dBpeak;
+    static int orientation; //ranges from 1 to 6
+    static double heading; //angle ranges from 0 to 360
+    static double[] headingXYZ;
+    TCP_Client (){
         this.acc = new double[3]; //X, Y, Z
         this.headingXYZ = new double[3]; //X, Y, Z
-        this.host = ip;
-        this.port = port;
+        Scanner scan = new Scanner(System.in);
+        String c = "bla";
+        do {
+            System.out.print("Enter IP: ");
+            if(scan.hasNextLine()) {
+                String ip = scan.nextLine();
+                this.host = ip;
+            }
+            System.out.print("Enter port: ");
+            if(scan.hasNextLine()) {
+                String port = scan.nextLine();
+                this.port = Integer.parseInt(port);
+            }
+            do {
+                System.out.print("IP: " + this.host + " | Port: " + this.port + ". Are you sure? [y/n]: ");
+                if(scan.hasNextLine())
+                {
+                    c = scan.nextLine();
+                }
+            } while (!(c.equalsIgnoreCase("y")) && !(c.equalsIgnoreCase("n")));
+        } while(!(c.equalsIgnoreCase("y")));
+        scan.close();
         msg = new Message(this, null, null);
         parser = new JSONParser();
         t = new Thread(this);
@@ -85,4 +107,102 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
 			e.printStackTrace();
 		}
 	}
+
+    static int getIndexFromDir(char dir) {
+        int index;
+        switch (dir) {
+            case 'X':
+            index = 0;
+            break;
+            case 'Y':
+            index = 1;
+            break;
+            case 'Z':
+            index = 2;
+            break;
+            default:
+            index = 3;
+        }
+        return index;
+    }
+
+    //useful for continuous shaking applications
+    static boolean avgAccAboveThreshold(char dir, double duration, double threshold) {
+        int index = getIndexFromDir(dir);
+        if (index == 3) return false;
+        double initTime = System.currentTimeMillis();
+        double totalAcc = 0; 
+        double x = 0;
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            totalAcc += Math.abs(acc[index]);
+            x++;
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        double avgAcc = totalAcc/(double) x;
+        if (avgAcc > threshold) return true;
+        else return false;
+    }
+    //useful for attacks
+    static double[] getAvgAcc(double duration) {
+        double initTime = System.currentTimeMillis();
+        double[] totalAcc = new double[3];
+        totalAcc[0] = 0; 
+        totalAcc[1] = 0; 
+        totalAcc[2] = 0; 
+        double x = 0;
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            totalAcc[0] += Math.abs(acc[0]);
+            totalAcc[1] += Math.abs(acc[1]);
+            totalAcc[2] += Math.abs(acc[2]);
+            x++;
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        double[] avgAcc = new double[3];
+        avgAcc[0] = totalAcc[0]/(double) x;
+        avgAcc[1] = totalAcc[1]/(double) x;
+        avgAcc[2] = totalAcc[2]/(double) x;
+        return avgAcc;
+    }
+    //useful for dodging (for +ve axis)
+    static boolean peakAccAboveThreshold(char dir, double duration, double threshold) {
+        int index = getIndexFromDir(dir);
+        if (index == 3) return false;
+        double initTime = System.currentTimeMillis();
+        double maxAcc = 0; 
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            if (acc[index] > maxAcc) maxAcc = acc[index];
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        if (maxAcc > threshold) return true;
+        else return false;
+    }
+    //useful for dodging (for -ve axis)
+    static boolean minAccBelowThreshold(char dir, double duration, double threshold) {
+        int index = getIndexFromDir(dir);
+        if (index == 3) return false;
+        double initTime = System.currentTimeMillis();
+        double minAcc = 0;
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            if (acc[index] < minAcc) minAcc = acc[index];
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        if (minAcc < threshold) return true;
+        else return false;
+    }
 }
