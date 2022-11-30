@@ -43,7 +43,7 @@ public class Bob extends NPC {
                 commInput = UIClient.getCommInput();
 
                 // checking if ONE word/value entered AND it is an INTEGER
-                if(commInput.length > 4) {
+                if(commInput.length > 4) { // more than one word + 3 padding words (by default at end of commInput)
                     System.out.println("Please enter one number to choose an option");
                     continue;
                 }
