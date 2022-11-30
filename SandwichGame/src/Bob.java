@@ -43,7 +43,7 @@ public class Bob extends NPC {
                 commInput = UIClient.getCommInput();
 
                 // checking if ONE word/value entered AND it is an INTEGER
-                if(commInput.length != 1) {
+                if(commInput.length > 4) {
                     System.out.println("Please enter one number to choose an option");
                     continue;
                 }
@@ -71,6 +71,9 @@ public class Bob extends NPC {
                 }
             } catch (InputMismatchException in) {
                 System.out.println("Seems like you have nothing to talk about. How about you get lost then."); option = 3;
+            } catch (InterruptedException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
             }
         } while (option != 3);
     }

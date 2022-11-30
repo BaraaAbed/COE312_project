@@ -8,7 +8,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public static Enemy fightingEnemy;
     public Thread t;
     private static String[] commInput;
-    private boolean isUpdate;
+    private static boolean isUpdate;
     public static boolean getAcc;
     public static boolean getDB;
     public static boolean getHeading;
@@ -65,7 +65,11 @@ public class UIClient extends ConcreteObserver implements Runnable{
     }
 
     // getter for commInput (used in bob talk function)
-    public static String[] getCommInput(){
+    public static String[] getCommInput() throws InterruptedException{
+        while(!isUpdate){
+            Thread.sleep(100);
+        }
+        isUpdate = false;
         return commInput;
     }
 
@@ -78,14 +82,14 @@ public class UIClient extends ConcreteObserver implements Runnable{
             case "Gnome":
             int counter = 0;
             ArrayList<Integer> paths = new ArrayList<Integer>();
-            for (int x = 0; x < 5; x++){
+            for (int x = 0; x < 10; x++){
                 paths.add(rand.nextInt(2));
             }
             System.out.println("You are just about approach the gnome when all of a sudden you hear:\n"
             +"Welcome to the path of the GNOME! As you can see, there are two paths up ahead. The rules are simple, you have to choose the path that doesn't have a gnome waiting there." 
-            +"To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast three times. Otherwise, you will die. The path of the gnome is randomized, so good luck, beacuse you will need it.");
+            +" To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast six times. Otherwise, you will die. The path of the gnome is randomized, so good luck, beacuse you will need it.");
             try{
-                for(int x = 0; x < paths.size() && counter < 3; x++){
+                for(int x = 0; x < paths.size() && counter < 5; x++){
                     isUpdate = false;
                     System.out.println("There are two paths ahead, choose right or left.");
                     while(!(commInput[0].equalsIgnoreCase("right") || commInput[0].equalsIgnoreCase("left"))){ 
@@ -94,12 +98,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     if((commInput[0].equalsIgnoreCase("right") && paths.get(x) == 1) || (commInput[0].equalsIgnoreCase("left") && paths.get(x) == 0)){
                         System.out.println("You walk through your chosen path nervously. Thankfully, it seems you lucked out.");
                     }
-                    else if(counter < 2){
+                    else if(counter < 4){
                         System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with a pretty bad injury."
                         +" Thankfully, it also pushed you forward, where you coincidentally landed at the end of the path. You look behind you with lingering fear. However, it doesn't seem like the gnome is going to chase you... yet." 
                         + " You should be careful next time, you won't always be this lucky.");
                         counter++;
-                    } else { //counter == 2
+                    } else { //counter == 4
                         System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury."
                         + "This is the third time, and you can feel it is the last as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open" +
                         "just when when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
@@ -110,7 +114,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     commInput[0] = "";
                 }
-                if (counter < 3){
+                if (counter < 5){
                     System.out.println("You finally crossed the paths, and you can see the magic mushroom right there. Just when you were worrying about how to leave, you suddenly notice that there is only one path behind you."
                     +" Not only that, but it seems to be connected directly to the exit. That means you won't have to rely on luck to leave this place, which makes you sigh in relief.");
                     Forest.getInstance().pathCrossed = true;

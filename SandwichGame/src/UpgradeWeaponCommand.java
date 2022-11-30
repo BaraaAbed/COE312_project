@@ -4,7 +4,7 @@ public class UpgradeWeaponCommand implements Command {
 
     UpgradeWeaponCommand(){
         p = Player.getInstance();
-        upgradePrice = 10;
+        upgradePrice = 30;
     }
 
     public void execute() {

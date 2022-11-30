@@ -1,5 +1,5 @@
 public class HighDamageWeapon extends Weapon {
     HighDamageWeapon(){
-        dmgMultiplier = 30;
+        dmgMultiplier = 3;
     }
 }
