@@ -7,7 +7,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public static boolean fighting;
     public static Enemy fightingEnemy;
     public Thread t;
-    private String[] commInput;
+    private static String[] commInput;
     private boolean isUpdate;
     public static boolean getAcc;
     public static boolean getDB;
@@ -17,12 +17,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private Player player;
     private Scanner scan;
     private Random rand;
+    private static UIClient instance;
     
 
     //constructor
-    public UIClient(ArrayList<ConcreteSubject> subjects){
+    private UIClient(ArrayList<ConcreteSubject> subjects){
         super(subjects);
-        rand = new Random(System. currentTimeMillis());
+        rand = new Random(System.currentTimeMillis());
         commInput = "lol".split(" ");
         getAcc = false;
         scan = new Scanner(System.in);
@@ -33,6 +34,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
         isUpdate = false;
         t = new Thread(this);
         t.start();
+    }
+
+    //gets instance (for singleton)
+    public static synchronized UIClient getInstance(ArrayList<ConcreteSubject> subjects){
+        if(instance == null) instance = new UIClient(subjects);
+        return instance;
     }
 
     @Override
@@ -57,7 +64,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
     }
 
-    //fight funciton
+    // getter for commInput (used in bob talk function)
+    public static String[] getCommInput(){
+        return commInput;
+    }
+
+    //fight function
     private void fight(Player player) throws InterruptedException{
         switch(fightingEnemy.toString()){
             case "Gordon":
@@ -89,7 +101,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         counter++;
                     } else { //counter == 2
                         System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury."
-                        + "This is the third time, and you can feel it is the last as well. The accumilation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open" +
+                        + "This is the third time, and you can feel it is the last as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open" +
                         "just when when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
                         "You have been gnomed to death." );
                         player.death();
@@ -124,7 +136,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
 
     //tutorial
     private void tutorial(Player player) throws InterruptedException{
-        System.out.println("Welcome to THE LEGEND OF THE SANDWICH!\n" + 
+        System.out.println("Welcome to THE MYTH OF THE LEGENDARY SANDWICH!\n" + 
         "This game was made by the collaborative efforts of:\n" +
         "Ahmad Mansour\n"+
         "Baraa Abed\n" +
@@ -165,7 +177,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         Player.currentLocation = Supermarket.getInstance();
         player.updateNearby();
-        System.out.println("You enter the Supermarket and find Bob the cahsier. Thankfully, he seems to be free at the moment. Maybe you should call him for a samll chat?\n" +
+        System.out.println("You enter the Supermarket and find Bob the cashier. Thankfully, he seems to be free at the moment. Maybe you should call him for a samll chat?\n" +
         "(Hint: type \"talk to Bob\")");
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
@@ -177,8 +189,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
         }
-        System.out.println("Bob: I translated everything on the note, so here have a look. If youhave any questions, I am right here. Also, you are gonna need this." +
-        "After saying that he gave you a stone sword."+
+        System.out.println("Bob: I translated everything on the note, so here have a look. If you have any questions, I am right here. Also, you are gonna need this." +
+        "*Bob hands you a stone sword*"+
         "Bob: After you beat some bosses, come see me again to updgrade the sword.");
         player.nextState();
         isUpdate = true;
@@ -204,11 +216,11 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 boolean saved = false;
                 if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
                     System.out.println("Even though you knew you shouldn't, you still did it. A moment later, you feel something hit you hard in the head. Then, everything went blank.\n" +
-                    "You died. Maybe you should curb your curiousity a little next time.");
+                    "You died. Maybe you should curb your curiosity a little next time.");
                     player.death();
                 }
                 if(Player.currentLocation == Cave.getInstance() && Cave.getInstance().blocked){
-                    if( player.getEquipped() instanceof FireExtinguisher){
+                    if(player.getEquipped() instanceof FireExtinguisher){
                         double intitialTime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - intitialTime < 5000.0 && (!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")))){
                             Thread.sleep(100);
@@ -253,7 +265,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                 found = true;
                             }
                         }
-                        if (!found) System.out.println("Go where now? I think missed what you said there.");
+                        if (!found) System.out.println("Go where now? I missed what you said there.");
                     } else System.out.println("(Hint: Try \"go to <Location>\"");
                     break;
                     case "nearby":
@@ -268,7 +280,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     if (!found) {
                         if(player.getEquipped().toString().equals(commInput[1])) player.getEquipped().use();
-                        else System.out.println("Use what? I think missed what you said there.");
+                        else System.out.println("Use what? I missed what you said there.");
                     }
                     break;
                     case "look":
@@ -291,7 +303,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                             found = true;
                         } 
                     }
-                    if (!found) System.out.println("Take what now? I think missed what you said there.");
+                    if (!found) System.out.println("Take what now? I missed what you said there.");
                     break;
                     case "inventory":
                     if(!player.isInvEmpty()) player.showInv();

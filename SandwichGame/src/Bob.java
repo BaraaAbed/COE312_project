@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Bob extends NPC {
     private static Bob instance;
     private ArrayList<Command> commands; // Bob is invoker class of command design pattern
+    private String[] commInput;
 
     private Bob() {
         description = "You find Bob doing the usual at the counter... you can ask him about the ingredients you need";
@@ -30,7 +31,6 @@ public class Bob extends NPC {
 
     public void talk() {
         int option = 999;
-        Scanner scan = new Scanner(System.in);
 
         do {
             try{
@@ -39,8 +39,26 @@ public class Bob extends NPC {
                 System.out.println("2. Upgrade sword");
                 System.out.println("3. Close menu");
                 System.out.println("Choose option: ");
-                option = scan.nextInt();
-                scan.nextLine(); // to remove extra new line
+
+                commInput = UIClient.getCommInput();
+
+                // checking if ONE word/value entered AND it is an INTEGER
+                if(commInput.length != 1) {
+                    System.out.println("Please enter one number to choose an option");
+                    continue;
+                }
+                else {
+                    try {
+                        option = Integer.parseInt(commInput[0]);
+                    }
+                    catch(NumberFormatException e) {
+                        System.out.println("You did not enter a number! Please enter one number to choose an option");
+                        continue;
+                    }
+                }
+
+                // at this point the user has entered ONE word/value AND it is an INTEGER
+                // can now check the option entered
 
                 if(option == 1 || option == 2){
                     chooseOption(option);
