@@ -15,4 +15,9 @@ public class Cheese extends Ingredient {
         System.out.println("Eating this cheese alone would ruin the sandwich!\n"
                         + "Cheese stayed in the inventory.");
     }
+
+    @Override
+    public String toString() {
+        return "Cheese";
+    }
 }

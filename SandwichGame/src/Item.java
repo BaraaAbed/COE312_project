@@ -7,6 +7,7 @@ public abstract class Item {
     //constructor
     public Item(){
         takable = true;
+        description = "";
     }
 
     //Function that allows the item to be used

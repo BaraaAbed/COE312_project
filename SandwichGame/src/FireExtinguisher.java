@@ -14,6 +14,6 @@ public class FireExtinguisher extends Item {
 
     @Override
     public String toString() {
-        return "extinguisher";
+        return "Extinguisher";
     }
 }

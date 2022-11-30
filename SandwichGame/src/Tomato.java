@@ -15,4 +15,9 @@ public class Tomato extends Ingredient {
         System.out.println("Eating this tomato alone would ruin the sandwich!\n"
                         + "Tomato stayed in the inventory.");
     }
+
+    @Override
+    public String toString() {
+        return "Tomato";
+    }
 }

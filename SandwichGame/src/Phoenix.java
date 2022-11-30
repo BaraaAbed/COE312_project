@@ -12,4 +12,9 @@ public class Phoenix extends Enemy {
         if(instance == null) instance = new Phoenix();
         return instance;
     }
+
+    @Override
+    public String toString() {
+        return "Phoenix";
+    }
 }

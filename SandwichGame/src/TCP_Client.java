@@ -188,7 +188,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         double initTime = System.currentTimeMillis();
         double maxAcc = 0; 
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (acc[index] > maxAcc) maxAcc = acc[index];
+            if (acc[index] > maxAcc) { maxAcc = acc[index]; }
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {

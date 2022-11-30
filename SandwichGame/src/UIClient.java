@@ -18,11 +18,15 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private Scanner scan;
     private Random rand;
     private static UIClient instance;
+    public static boolean failedSabo;
+    private double dodgeDuration;
+    private Location prevLoc;
     
 
     //constructor
     private UIClient(ArrayList<ConcreteSubject> subjects){
         super(subjects);
+        failedSabo = true;
         rand = new Random(System.currentTimeMillis());
         commInput = "lol".split(" ");
         getAcc = false;
@@ -32,6 +36,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         getHeading = false;
         getOrientation = false;
         isUpdate = false;
+        dodgeDuration = 1.0;
         t = new Thread(this);
         t.start();
     }
@@ -77,7 +82,109 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private void fight(Player player) throws InterruptedException{
         switch(fightingEnemy.toString()){
             case "Gordon":
-            //hecks kitchen fight
+            boolean SaboOven = false;
+            boolean SaboBlender = false;
+            boolean SaboFryer = false;
+            System.out.println("Gordon: Welcome to Heck's Kitchen! Today, we will have a cook off between the two teams, Team Red and Team blue!"
+            + " There are rules that must be followed during this competiton.\n"
+            +"Rule 1: Don't ever touch the LAMB SAUCE!\n"
+            +"Rule 2: Don't ever touch the LAMB SAUCE!\n"
+            +"Rule 3: Don't ever touch the LAMB SAUCE!\n"
+            + "Gordon: To make sure you follow the rules, I will personally be guarding the LAMB SAUCE myself.\n"
+            + "As you are listening to his rules, you start to ponder on how to get that sauce. That's when you noticed three stations:\n"
+            + "Station A: This has an Oven\n"
+            + "Station B: This has a Fryer\n"
+            + "Station C: This has a Blender\n"
+            + "Maybe if you can sabotage one of those stations, you could distract Gordon Ramsey for long enough to silently steal the LAMB SAUCE.\n"
+            + "You: Hmm... Lets use a super cool name for this operation. How about Operation: THAT'S MY SAUCE! Yup, my naming sense is the best.");
+            while(!(SaboOven && SaboBlender && SaboFryer) && failedSabo){
+                failedSabo = false;
+                if(SaboOven || SaboBlender || SaboFryer) System.out.println("You still have a chance, try another station!");
+                System.out.println("Choose between stations A, B, or C to start the operation:");
+                while(!isUpdate){
+                    Thread.sleep(100);
+                }
+                isUpdate = false;
+                switch(commInput[0].toUpperCase()){
+                    case "A":
+                    if(SaboOven){
+                        System.out.println("You have already attempted this station. The same trick won't work twice.");
+                        failedSabo = true;
+                        continue;
+                    } else {
+                        HeckItems oven = (HeckItems) Player.currentLocation.items.get(0);
+                        oven.sabotage();
+                        if(failedSabo) {
+                            System.out.println("You have failed the sabotage!");
+                            SaboOven = true;
+                        }
+                    }
+                    break;
+                    case "B":
+                    if(SaboFryer){
+                        System.out.println("You have already attempted this station. The same trick won't work twice.");
+                        failedSabo = true;
+                        continue;
+                    } else {
+                        HeckItems fryer = (HeckItems) Player.currentLocation.items.get(1);
+                        fryer.sabotage();
+                        if(failedSabo) {
+                            System.out.println("You have failed the sabotage!");
+                            SaboFryer = true;
+                        }
+                    }
+                    break;
+                    case "C":  
+                    if(SaboBlender){
+                        System.out.println("You have already attempted this station. The same trick won't work twice.");
+                        failedSabo = true;
+                        continue;
+                    } else {
+                        HeckItems blender = (HeckItems) Player.currentLocation.items.get(2);
+                        blender.sabotage();
+                        if(failedSabo) {
+                            System.out.println("You have failed the sabotage!");
+                            SaboBlender = true;
+                        }
+                    }
+                    
+                    break;
+                    default:
+                    System.out.println("Ha? How about you try again.");
+                    continue;
+                }
+                if(!failedSabo){
+                    System.out.println("Gordon Ramsey has went to check on the station, take this chance to SILENTLY sneak behind him and steal the sauce!");
+                    Thread.sleep(3000);
+                    failedSabo = !TCP_Client.peakSoundBelowThreshold(10, -25);
+                    if(failedSabo) System.out.println("You were not quiet enough, and was noticed by Gordon. Thankfully, he mistunderstands it as you running away from the station to not take the blame.");
+                }
+            }
+            if (!failedSabo){
+                    System.out.println("You got the sauce, now quickly run away before Gordon catches you!");
+                    Thread.sleep(1500);
+                    failedSabo = !TCP_Client.avgAccAboveThreshold('X', 5, 3.5);
+            }
+            
+            if (!failedSabo){
+                System.out.println("You successfully got the LAMB SAUCE!");
+                player.addCoins(10);
+                System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
+                player.addItem(Player.currentLocation.items.get(3));
+                Player.currentLocation.items.remove(3);
+                Player.currentLocation = Road.getInstance();
+                player.updateNearby();
+                Kitchen.getInstance().blocked = true;
+            } else {
+                System.out.println("The operation is a bust. Gordon catches on to your act and sends knife straight to your forehead."
+                + "it's too late to dodge, and it pierces straight into your head. He then comes to you, grabs two pieces of bread, places your head in between."
+                + "He then asks you:\n"
+                + "Gordon: WHAT ARE YOU!\n"
+                + "For some reason, only one phrase appears in your mind at that moment, and so you shout while blacking out:\n"
+                + "You: AN IDIOT SANDWICH!\n"
+                + "You then slowely die. Died as an idiot sandwich.");
+                player.death();
+            }
             break;
             case "Gnome":
             int counter = 0;
@@ -104,9 +211,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         + " You should be careful next time, you won't always be this lucky.");
                         counter++;
                     } else { //counter == 4
-                        System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury."
-                        + "This is the third time, and you can feel it is the last as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open" +
-                        "just when when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
+                        System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury. "
+                        + "This is the third time, and you can feel it is the last as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open. " +
+                        "Just when when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
                         "You have been gnomed to death." );
                         player.death();
                         isUpdate = false;
@@ -124,16 +231,48 @@ public class UIClient extends ConcreteObserver implements Runnable{
             } catch (InterruptedException e) {}
             break;
             default:
-            System.out.println("You have started a fight with " + fightingEnemy.toString());
+            System.out.println("You have started a fight with the " + fightingEnemy.toString());
             while(player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
-                System.out.println("You are on the offense, slash your sword to attack him");
-                if(TCP_Client.getAvgAcc(3)[0] > 15.0){
-                    System.out.println("Your slash hit! " + fightingEnemy.toString() + " has taken damage. Now get ready to dodge!");
-                    player.attack();
+                Thread.sleep(2000);
+                System.out.println("You are on the offense, swing your sword to attack the " + fightingEnemy + "!");
+                player.attack(TCP_Client.getAvgAcc(5));
+                if (fightingEnemy.getHealth() > 0) {
+                    System.out.println(fightingEnemy + " is attacking! Get ready to dodge:");
+                    Thread.sleep(2000);
+                    boolean failed = false;
+                    for (int x = rand.nextInt(5,10); (x > 0) && !failed; x--) {
+                        switch(rand.nextInt(5)) {
+                            case 0:
+                            System.out.print("Duck! ");
+                            failed = !(TCP_Client.minAccBelowThreshold('Y', dodgeDuration, -2.0));
+                            break;
+                            case 1:
+                            System.out.print("Jump! ");
+                            failed = !(TCP_Client.peakAccAboveThreshold('Y', dodgeDuration, 2.0));
+                            break;
+                            case 2:
+                            System.out.print("Move right! ");
+                            failed = !(TCP_Client.peakAccAboveThreshold('X', dodgeDuration, 2.0));
+                            break;
+                            case 3:
+                            System.out.print("Move left! ");
+                            failed = !(TCP_Client.minAccBelowThreshold('X', dodgeDuration, -2.0));
+                            break;
+                            case 4:
+                            System.out.print("Step back! ");
+                            failed = !(TCP_Client.peakAccAboveThreshold('Z', dodgeDuration, 2.0));
+                            break;
+                        }
+                        Thread.sleep(2000);
+                        if (!failed) System.out.println("✓");
+                        else System.out.println("X");
+                    }
+                    if (!failed) System.out.println("Good dodging! You dodged the " + fightingEnemy + "'s attack succesfully!");
+                    else {
+                        System.out.println("Not good. You moved directly into the " + fightingEnemy + "'s attack!");
+                        fightingEnemy.attack();
+                    }
                 }
-                Thread.sleep(rand.nextInt(1000,3000));
-                System.out.println(fightingEnemy + " is attacking! Dodge quick!");
-                //if dodged thingy
             }
         }
     }
@@ -210,18 +349,31 @@ public class UIClient extends ConcreteObserver implements Runnable{
     @Override
     public void run() {
         Player.currentLocation = House.getInstance();
-        try {
-            tutorial(player);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
+        // try {
+        //     tutorial(player);
+        // } catch (InterruptedException e1) {
+        //     e1.printStackTrace();
+        // }
         while(true){
             try{
                 boolean saved = false;
                 if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
-                    System.out.println("Even though you knew you shouldn't, you still did it. A moment later, you feel something hit you hard in the head. Then, everything went blank.\n" +
+                    System.out.println("Even though you knew you shouldn't, you still did it. Unsuprisingly, you have been stabbed in the back. 10 times.\n" +
                     "You died. Maybe you should curb your curiosity a little next time.");
                     player.death();
+                }
+                if(Player.currentLocation == Sewers.getInstance()){
+                    if(TCP_Client.avgAccAboveThreshold('X', 5, 3.5)){
+                        System.out.println("You have successfully escaped the rats!");
+                        if(prevLoc == Road.getInstance()) Player.currentLocation = RatHouse.getInstance();
+                        else Player.currentLocation = Road.getInstance();
+                        player.updateNearby();
+                        System.out.println(Player.currentLocation.getDescription());
+                    } else {
+                        System.out.println("You are not fast enough, and soon rats catch up to you. There is no escape anymore.\n" 
+                        + "You died, becoming dinner for the hungry swarm of rats.");
+                        player.death();
+                    }
                 }
                 if(Player.currentLocation == Cave.getInstance() && Cave.getInstance().blocked){
                     if(player.getEquipped() instanceof FireExtinguisher){
@@ -236,7 +388,10 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         player.death();
                         isUpdate = false;
                     }
-                    else Cave.getInstance().blocked = false;
+                    else {
+                        Cave.getInstance().blocked = false;
+                        isUpdate = false;
+                    }
                 }
                 while(!isUpdate){
                     Thread.sleep(100);
@@ -253,13 +408,18 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
                                     } else {
                                         if(Torch.on){
+                                            prevLoc = Player.currentLocation;
                                             Player.currentLocation = player.nearby.get(x);
                                             System.out.println(Player.currentLocation.getDescription());
                                         } else System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
                                     }
                                 } else {
+                                    prevLoc = Player.currentLocation;
                                     Player.currentLocation = player.nearby.get(x);
-                                    System.out.println(Player.currentLocation.getDescription());
+                                    if(Player.currentLocation == Kitchen.getInstance() && Kitchen.getInstance().blocked){
+                                        System.out.println("You probably don't want to see Gordan Ramsey again, especially after stealing his LAMB SAUCE");
+                                        Player.currentLocation = Road.getInstance();
+                                    } else System.out.println(Player.currentLocation.getDescription());
                                 }
                                 if(player.nearby.get(x) == Forest.getInstance()) {
                                     Forest.getInstance().pathCrossed = false;
@@ -277,7 +437,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "use":
                     for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
-                        if(Player.currentLocation.items.get(x).toString().equalsIgnoreCase(commInput[1])){
+                        if(Player.currentLocation.items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
                             Player.currentLocation.items.get(x).use();
                             found = true;
                         } 
@@ -337,10 +497,15 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     fightingEnemy = Player.currentLocation.enemy;
                     if (fightingEnemy != null){
                         fight(player);
-                    } else System.out.println("There is no enemy to fight here, how about you go punch a wall instead.");
+                    } else System.out.println("There is no enemy to fight here, how about you go punch the wall instead.");
                     break;
                     case "unequip":
                     player.unequip();
+                    break;
+                    case "punch":
+                    if(commInput[1].equalsIgnoreCase("wall")){
+                        System.out.println("We didn't mean in literally... How about you punch your screen.");
+                    }
                     break;
                     default:
                     System.out.println("Ha? I thought I heard something. Must've been a fly. Those pesky flies!");

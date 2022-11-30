@@ -12,4 +12,14 @@ public class Scarecrow extends Enemy {
         if(instance == null) instance = new Scarecrow();
         return instance;
     }
+
+    @Override
+    public String toString() {
+        return "Scarecrow";
+    }
+
+    @Override
+    public void makeTakable() {
+        Lettuce.getInstance().takable = true;
+    }
 }

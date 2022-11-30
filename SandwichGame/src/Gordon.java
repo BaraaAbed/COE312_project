@@ -12,4 +12,9 @@ public class Gordon extends Enemy {
         if(instance == null) instance = new Gordon();
         return instance;
     }
+
+    @Override
+    public String toString() {
+        return "Gordon";
+    }
 }

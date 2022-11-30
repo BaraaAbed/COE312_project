@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Player {
     //initialzing variables
@@ -14,12 +15,14 @@ public class Player {
     private static Player instance;//singleton
     private State locationLockState; // state design pattern
     private int coins; // keep track of num of coins
+    private Random rand;
 
     //Constructor
     private Player(){
         sword = "Stone sword";
         nearby = new ArrayList<Location>();
         inventory = new ArrayList<Item>();
+        rand = new Random(System.currentTimeMillis());
         ingredients = new ArrayList<Ingredient>();
         currentLocation = House.getInstance();
         weapon = new LowDamageWeapon(); // starts with stone sword from cashier
@@ -41,15 +44,27 @@ public class Player {
     }
 
     //take dmg
-    public static void takeDmg(double _dmg){
-        // add if statement to check if negative health, 
-        // then died/respawn and reset health?
+    public void takeDmg(double _dmg){
         health -= _dmg;
+        if (health <= 0) {
+            System.out.println("You died! (x_x)");
+            death();
+        }
+        else {
+            System.out.println("You now have " + health + " health left!");
+        }
     }
 
     //deals dmg to enemies
-    public void attack(){
-        double totalDmg = dmg*weapon.getDmgMultiplier(); // using weapon strategy
+    public void attack(double[] avg){
+        double rand1 = rand.nextDouble();
+        double rand2 = rand.nextDouble();
+        double rand3 = rand.nextDouble();
+        double swingMulti = avg[0]*rand1 + avg[1]*rand2 + avg[2]*rand3;
+        if ((rand1 + rand2 + rand3) > 2.6) System.out.println("Critical hit! That must have hurt!");
+        else if ((rand1 + rand2 + rand3) < 0.8) System.out.println("Weak hit! The " + UIClient.fightingEnemy + " partially dodged your hit.");
+        else if ((rand1 + rand2 + rand3) < 0.1) System.out.println("You're just unlucky mate. It's like you didn't even attack!");
+        double totalDmg = dmg*swingMulti*weapon.getDmgMultiplier(); // using weapon strategy and rng/swing multiplier
         UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
@@ -161,7 +176,7 @@ public class Player {
         System.out.println(currentLocation.getDescription());
         if (currentLocation.enemy != null) System.out.println(currentLocation.enemy.description);
         for(int i=0; i<currentLocation.items.size() && !currentLocation.items.isEmpty();i++){
-            System.out.println(currentLocation.items.get(i).getDescription());
+            if(!currentLocation.items.get(i).getDescription().equals("")) System.out.println(currentLocation.items.get(i).getDescription());
         }
         for(int i=0; i<currentLocation.npcs.size() && !currentLocation.npcs.isEmpty();i++){
             System.out.println(currentLocation.npcs.get(i).getDescription());

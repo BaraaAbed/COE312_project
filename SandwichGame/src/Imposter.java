@@ -12,4 +12,10 @@ public class Imposter extends Enemy {
         if(instance == null) instance = new Imposter();
         return instance;
     }
+
+    @Override
+    public String toString() {
+        return "Imposter";
+    }
+
 }

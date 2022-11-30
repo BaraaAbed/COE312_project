@@ -14,16 +14,30 @@ public class Enemy {
     
     //attack player
     public void attack(){//attack
-        Player.takeDmg(dmg);
+        System.out.print("The " + this + " did " + dmg + " damage to you. ");
+        Player.getInstance().takeDmg(dmg);
     }
 
     //function for taking dmg
     public void takeDmg(double _dmg){
         health -= _dmg;
+        if (health <= 0){
+            health = 0;
+            System.out.println("You have successfully killed the " + this);
+            Player.currentLocation.enemy = null;
+            makeTakable();
+        } else {
+            System.out.println("You did " + _dmg + " damage to the enemy! The " + this + " has " + health + " health left!");
+        }
     }
 
     //health getter
     public double getHealth(){
         return health;
+    }
+
+    //make takable
+    public void makeTakable(){
+        //will be overwritten
     }
 }

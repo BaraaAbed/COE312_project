@@ -12,4 +12,9 @@ public class RatKing extends Enemy {
         if(instance == null) instance = new RatKing();
         return instance;
     }
+
+    @Override
+    public String toString() {
+        return "Rat King";
+    }
 }

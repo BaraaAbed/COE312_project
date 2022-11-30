@@ -3,14 +3,16 @@ import java.util.ArrayList;
 public class Kitchen extends Location {
     //initializing variables
     private static Kitchen instance; //singleton
+    public boolean blocked;
 
     //constructor
     private Kitchen(){
-        description = "Your kitchen is where you make yourself some food to eat. There is a fridge.";
+        description = "You're now in Heck's kitchen, the place where Gordon Ramsay puts young chefs into one heck of a ride. At the entrance, there is a poster for some kind of cooking competition.";
         items.add(new Oven());
         items.add(new Fryer());
         items.add(new Blender());
         items.add(Sauce.getInstance());
+        blocked = false;
         enemy = Gordon.getInstance();
     }
 

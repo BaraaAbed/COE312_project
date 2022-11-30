@@ -15,4 +15,9 @@ public class Meat extends Ingredient {
         System.out.println("Eating this meat alone would ruin the sandwich!\n"
                         + "Meat stayed in the inventory.");
     }
+
+    @Override
+    public String toString() {
+        return "Meat";
+    }
 }

@@ -19,6 +19,6 @@ public class Torch extends Item {
 
     @Override
     public String toString() {
-        return "torch";
+        return "Torch";
     }
 }
