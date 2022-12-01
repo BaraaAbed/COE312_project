@@ -6,4 +6,9 @@ public class MapUnlockedState implements State {
     public void printStatus() {
         System.out.println("Map locations are unlocked");
     }
+
+    @Override
+    public void next(HeckItems heckItems) {
+        //do nothing
+    }
 }

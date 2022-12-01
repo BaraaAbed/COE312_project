@@ -1,4 +1,7 @@
 public abstract class HeckItems extends Item {
+    //variables
+    public State SaboState = new NotSabotaged();
+
     //constructor
     public HeckItems(){
         takable = false;
@@ -20,4 +23,19 @@ public abstract class HeckItems extends Item {
     public abstract void fristDamage();
     public abstract void secondDamage();
     public abstract void thirdDamage();
+
+    // go to next state (used in main/driver/ui)
+    public void nextState() {
+        SaboState.next(this);
+    }
+
+    // print current state
+    public void printStatus() {
+        SaboState.printStatus();
+    }
+
+    // set the state (used by state children)
+    public void setState(State s) {
+        SaboState = s;
+    }
 }

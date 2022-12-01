@@ -82,9 +82,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private void fight(Player player) throws InterruptedException{
         switch(fightingEnemy.toString()){
             case "Gordon":
-            boolean SaboOven = false;
-            boolean SaboBlender = false;
-            boolean SaboFryer = false;
             System.out.println("Gordon: Welcome to Heck's Kitchen! Today, we will have a cook off between the two teams, Team Red and Team blue!"
             + " There are rules that must be followed during this competiton.\n"
             +"Rule 1: Don't ever touch the LAMB SAUCE!\n"
@@ -97,9 +94,15 @@ public class UIClient extends ConcreteObserver implements Runnable{
             + "Station C: This has a Blender\n"
             + "Maybe if you can sabotage one of those stations, you could distract Gordon Ramsey for long enough to silently steal the LAMB SAUCE.\n"
             + "You: Hmm... Lets use a super cool name for this operation. How about Operation: THAT'S MY SAUCE! Yup, my naming sense is the best.");
-            while(!(SaboOven && SaboBlender && SaboFryer) && failedSabo){
+            HeckItems oven = (HeckItems) Player.currentLocation.items.get(0);
+                HeckItems fryer = (HeckItems) Player.currentLocation.items.get(1);
+                HeckItems blender = (HeckItems) Player.currentLocation.items.get(2);
+                oven.setState(new NotSabotaged());
+                fryer.setState(new NotSabotaged());
+                blender.setState(new NotSabotaged());
+            while(!(oven.SaboState instanceof Sabotaged && blender.SaboState instanceof Sabotaged && fryer.SaboState instanceof Sabotaged) && failedSabo){
                 failedSabo = false;
-                if(SaboOven || SaboBlender || SaboFryer) System.out.println("You still have a chance, try another station!");
+                if(oven.SaboState instanceof Sabotaged || blender.SaboState instanceof Sabotaged || fryer.SaboState instanceof Sabotaged) System.out.println("You still have a chance, try another station!");
                 System.out.println("Choose between stations A, B, or C to start the operation:");
                 while(!isUpdate){
                     Thread.sleep(100);
@@ -107,50 +110,48 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 isUpdate = false;
                 switch(commInput[0].toUpperCase()){
                     case "A":
-                    if(SaboOven){
-                        System.out.println("You have already attempted this station. The same trick won't work twice.");
+                    if(oven.SaboState instanceof Sabotaged){
+                        oven.printStatus();
                         failedSabo = true;
                         continue;
                     } else {
-                        HeckItems oven = (HeckItems) Player.currentLocation.items.get(0);
                         oven.sabotage();
                         if(failedSabo) {
                             System.out.println("You have failed the sabotage!");
-                            SaboOven = true;
+                            oven.nextState();
                         }
                     }
                     break;
                     case "B":
-                    if(SaboFryer){
-                        System.out.println("You have already attempted this station. The same trick won't work twice.");
+                    if(fryer.SaboState instanceof Sabotaged){
+                        fryer.printStatus();
                         failedSabo = true;
                         continue;
                     } else {
-                        HeckItems fryer = (HeckItems) Player.currentLocation.items.get(1);
                         fryer.sabotage();
                         if(failedSabo) {
                             System.out.println("You have failed the sabotage!");
-                            SaboFryer = true;
+                            fryer.nextState();
                         }
                     }
                     break;
                     case "C":  
-                    if(SaboBlender){
-                        System.out.println("You have already attempted this station. The same trick won't work twice.");
+                    if(blender.SaboState instanceof Sabotaged){
+                        blender.printStatus();
                         failedSabo = true;
                         continue;
                     } else {
-                        HeckItems blender = (HeckItems) Player.currentLocation.items.get(2);
                         blender.sabotage();
                         if(failedSabo) {
                             System.out.println("You have failed the sabotage!");
-                            SaboBlender = true;
+                            blender.nextState();
                         }
                     }
                     
                     break;
                     default:
                     System.out.println("Ha? How about you try again.");
+                    failedSabo = true;
                     continue;
                 }
                 if(!failedSabo){
@@ -177,12 +178,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 Kitchen.getInstance().blocked = true;
             } else {
                 System.out.println("The operation is a bust. Gordon catches on to your act and sends knife straight to your forehead."
-                + "it's too late to dodge, and it pierces straight into your head. He then comes to you, grabs two pieces of bread, places your head in between."
-                + "He then asks you:\n"
+                + " It's too late to dodge, and it pierces straight into your head. He then comes to you, grabs two pieces of bread, places your head in between."
+                + " He then asks you:\n"
                 + "Gordon: WHAT ARE YOU!\n"
-                + "For some reason, only one phrase appears in your mind at that moment, and so you shout while blacking out:\n"
+                + "For some reason, only one phrase appears in your mind at that moment, and so you shout before blacking out:\n"
                 + "You: AN IDIOT SANDWICH!\n"
-                + "You then slowely die. Died as an idiot sandwich.");
+                + "You then slowely die. Die as an idiot sandwich.");
                 player.death();
             }
             break;
