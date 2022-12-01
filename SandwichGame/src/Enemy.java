@@ -1,9 +1,17 @@
+import java.text.DecimalFormat;
 
-public class Enemy {
+public abstract class Enemy {
     //initializing variables
     protected double health;
     protected double dmg;
     protected String description;
+    protected double baseHealth;
+    protected DecimalFormat dec;
+
+    public Enemy() {
+        this.dec = new DecimalFormat();
+        dec.setMaximumFractionDigits(1);
+    }
 
     ///Fighting mechanics
     //Start fight
@@ -27,7 +35,7 @@ public class Enemy {
             Player.currentLocation.enemy = null;
             makeTakable();
         } else {
-            System.out.println("You did " + _dmg + " damage to the enemy! The " + this + " has " + health + " health left!");
+            System.out.println("You did " + dec.format(_dmg) + " damage to the enemy! The " + this + " has " + dec.format(health) + " health left!");
         }
     }
 
@@ -40,4 +48,7 @@ public class Enemy {
     public void makeTakable(){
         //will be overwritten
     }
+
+    public abstract double getAttackDur();
+    public abstract double getDodgeDur();
 }

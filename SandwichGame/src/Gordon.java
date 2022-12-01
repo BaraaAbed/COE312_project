@@ -17,4 +17,14 @@ public class Gordon extends Enemy {
     public String toString() {
         return "Gordon";
     }
+
+	@Override
+	public double getAttackDur() {
+		return 0;
+	}
+
+	@Override
+	public double getDodgeDur() {
+		return 0;
+	}
 }

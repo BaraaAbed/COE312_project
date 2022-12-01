@@ -2,8 +2,9 @@ public class RatKing extends Enemy {
     private static RatKing instance;
 
     private RatKing() {
-        health = 100;
-        dmg = 10;
+        baseHealth = 200;
+        health = baseHealth;
+        dmg = 20;
         description = "You have awoken the Rat King from his slumber on his throne! You will not get away with this!";
     }
 
@@ -22,4 +23,14 @@ public class RatKing extends Enemy {
     public void makeTakable() {
         Cheese.getInstance().takable = true;
     }
+
+	@Override
+	public double getAttackDur() {
+		return 4;
+	}
+
+	@Override
+	public double getDodgeDur() {
+		return 2;
+	}
 }

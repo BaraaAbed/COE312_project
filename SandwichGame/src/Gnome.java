@@ -17,4 +17,14 @@ public class Gnome extends Enemy {
     public String toString() {
         return "Gnome";
     }
+
+	@Override
+	public double getAttackDur() {
+		return 0;
+	}
+
+	@Override
+	public double getDodgeDur() {
+		return 0;
+	}
 }

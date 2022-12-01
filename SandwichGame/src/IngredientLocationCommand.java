@@ -14,10 +14,10 @@ public class IngredientLocationCommand implements Command {
             "Fridge: Golden Bread\n"+
             "Haunted Farm: Legendary Lettuce\n"+
             "Abandoned Warehouse: Legendary Tomato\n"+
-            "Forest: Legendary Mushroom\n"+
+            "Forest: Magic Mushroom\n"+
             "Rat King's castle: Legendary Cheese\n"+
             "Volcano Cave: Phoenix Meat\n"+
-            "Heck's Kitchen: Lamb Sauce\n");
+            "Heck's Kitchen: Lamb Sauce");
         }
     }
 }

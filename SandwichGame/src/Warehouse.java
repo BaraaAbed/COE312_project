@@ -6,7 +6,7 @@ public class Warehouse extends Location {
 
     //constructor
     private Warehouse(){
-        description = "silence... The warehouse is dark and quiet, and you hear a suspicious sound...";
+        description = "Silence... The warehouse is dark and quiet. A suspicious sound can be heard...";
         items.add(Tomato.getInstance());
         enemy = Imposter.getInstance();
     }

@@ -20,6 +20,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private double attackDuration;
     private Location prevLoc;
     private boolean AttackFirst;
+    private boolean LastChance;
 
     //constructor
     private UIClient(ArrayList<ConcreteSubject> subjects){
@@ -35,6 +36,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         isUpdate = false;
         dodgeDuration = 1.2;
         attackDuration = 5;
+        LastChance = false;
         t = new Thread(this);
         t.start();
     }
@@ -156,7 +158,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     System.out.println("Gordon Ramsey has went to check on the station, take this chance to SILENTLY sneak behind him and steal the sauce!");
                     Thread.sleep(3000);
                     failedSabo = !TCP_Client.peakSoundBelowThreshold(10, -25);
-                    if(failedSabo) System.out.println("You were not quiet enough, and was noticed by Gordon. Thankfully, he mistunderstands it as you running away from the station to not take the blame.");
+                    if(failedSabo) System.out.println("You were not quiet enough, and was noticed by Gordon. Thankfully, he mistunderstands it as you running away from the station to not take the blame and so does noth.");
                 }
             }
             if (!failedSabo){
@@ -192,15 +194,23 @@ public class UIClient extends ConcreteObserver implements Runnable{
             for (int x = 0; x < 10; x++){
                 paths.add(rand.nextInt(2));
             }
-            System.out.println("You are just about approach the gnome when all of a sudden you hear:\n"
+            System.out.println("You were just about to approach the gnome when all of a sudden you hear:\n"
             +"Welcome to the path of the GNOME! As you can see, there are two paths up ahead. The rules are simple, you have to choose the path that doesn't have a gnome waiting there." 
-            +" To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast six times. Otherwise, you will die. The path of the gnome is randomized, so good luck, beacuse you will need it.");
+            +" To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast six times. Otherwise, you will die. The path of the gnome is always changing, so good luck! Because you will need it.");
             try{
                 for(int x = 0; x < paths.size() && counter < 5; x++){
                     isUpdate = false;
                     System.out.println("There are two paths ahead, choose right or left.");
                     while(!(commInput[0].equalsIgnoreCase("right") || commInput[0].equalsIgnoreCase("left"))){ 
                         Thread.sleep(100);
+                        if (isUpdate) {
+                            if (commInput[0].equalsIgnoreCase("go") && commInput[1].equalsIgnoreCase("to")) System.out.println("There is no escape from the path of the gnome. You either complete the path or die trying!");
+                            else System.out.println("Its either RIGHT or LEFT. Nothing complicated!");
+                        } 
+                        isUpdate = false;
+                        while(!isUpdate){
+                            Thread.sleep(10);
+                        }
                     }
                     if((commInput[0].equalsIgnoreCase("right") && paths.get(x) == 1) || (commInput[0].equalsIgnoreCase("left") && paths.get(x) == 0)){
                         System.out.println("You walk through your chosen path nervously. Thankfully, it seems you lucked out.");
@@ -212,8 +222,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         counter++;
                     } else { //counter == 4
                         System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury. "
-                        + "This is the third time, and you can feel it is the last as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open. " +
-                        "Just when when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
+                        + "This is the fifth time, and you can feel it is the last one as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open. " +
+                        "Just when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
                         "You have been gnomed to death." );
                         player.death();
                         isUpdate = false;
@@ -223,7 +233,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 }
                 if (counter < 5){
                     System.out.println("You finally crossed the paths, and you can see the magic mushroom right there. Just when you were worrying about how to leave, you suddenly notice that there is only one path behind you."
-                    +" Not only that, but it seems to be connected directly to the exit. That means you won't have to rely on luck to leave this place, which makes you sigh in relief.");
+                    +" Not only that, but it seems to be connected directly to the exit, which makes you sigh in relief.");
                     Forest.getInstance().pathCrossed = true;
                     Mushroom.getInstance().takable = true;
                     isUpdate = false;
@@ -233,7 +243,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
             default:
             AttackFirst = rand.nextBoolean();
             System.out.println("You have started a fight with the " + fightingEnemy.toString());
-            while(player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
+            attackDuration = fightingEnemy.getAttackDur();
+            dodgeDuration = fightingEnemy.getDodgeDur();
+            while(player.currentLocation == House.getInstance() && player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
                 if (AttackFirst) {
                     Thread.sleep(2000);
                     offense();
@@ -246,12 +258,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     Thread.sleep(2000);
                     offense();
                 }
-             }
+            }
+            if (player.getHealth() == 0) {
+                System.out.println("You died! (x_x)");
+                player.death();
+            }
         }
     }
 
     private void defense() throws InterruptedException {
-        if (fightingEnemy.getHealth() > 0) {
+        if (player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0) {
             System.out.println(fightingEnemy + " is attacking! Get ready to dodge:");
             boolean failed = false;
             for (int x = rand.nextInt(3,7); (x > 0) && !failed; x--) {
@@ -278,7 +294,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     failed = !(TCP_Client.peakAccAboveThreshold('Z', dodgeDuration, 2.0));
                     break;
                 }
-                if (!failed) System.out.println("✓");
+                if (!failed) System.out.println("O");
                 else System.out.println("X");
             }
             if (!failed) System.out.println("Good dodging! You dodged the " + fightingEnemy + "'s attack succesfully!");
@@ -290,15 +306,84 @@ public class UIClient extends ConcreteObserver implements Runnable{
     }
 
     private void offense() {
-        System.out.println("You are on the offense, swing your sword to attack the " + fightingEnemy + "!");
-        player.attack(TCP_Client.getAvgAcc(attackDuration));
+        if (player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0) {
+            System.out.println("You are on the offense, swing your sword to attack the " + fightingEnemy + "!");
+            player.attack(TCP_Client.getAvgAcc(attackDuration));
+        }
+    }
+
+    //used exclusively for final boss
+    private boolean twisting() throws InterruptedException {
+        if (LastChance) return false;
+        else {
+            System.out.println("You are on your last straw and the " + fightingEnemy + " is trying to eat you (how ironic)! You must twist in a certian manner to be set free!");
+            boolean failed = false;
+            for (int x = rand.nextInt(3,7); (x > 0) && !failed; x--) {
+                Thread.sleep(2000);
+                switch(rand.nextInt(5)) {
+                    case 0:
+                    System.out.print("Twist right! ");
+                    failed = !(TCP_Client.minGyroBelowThreshold('Y', dodgeDuration, -10.0));
+                    break;
+                    case 1:
+                    System.out.print("Twist left! ");
+                    failed = !(TCP_Client.peakGyroAboveThreshold('Y', dodgeDuration, 10.0));
+                    break;
+                    case 2:
+                    System.out.print("Rotate left! ");
+                    failed = !(TCP_Client.peakGyroAboveThreshold('Z', dodgeDuration, 15.0));
+                    break;
+                    case 3:
+                    System.out.print("Rotate right! ");
+                    failed = !(TCP_Client.minGyroBelowThreshold('Z', dodgeDuration, -15.0));
+                    break;
+                }
+                if (!failed) System.out.println("O");
+                else System.out.println("X");
+            }
+            LastChance = true;
+            if (!failed) {
+                System.out.println("Phew! You luckly escaped the " + fightingEnemy + ". Be careful as you might not be this lucky next time!");
+                return true;
+            }
+            else {
+                System.out.println("Not good. You didn't twist properly and wasn't able to escape the " + fightingEnemy + ".");
+                return false;
+            }
+        }
+
     }
 
     //FinalBossFight
-    public boolean bossFight(){
-
-
-        return true;
+    public boolean bossFight() throws InterruptedException {
+            boolean notDead = true;
+            AttackFirst = false;
+            attackDuration = fightingEnemy.getAttackDur();
+            dodgeDuration = fightingEnemy.getDodgeDur();
+            while(player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
+                if (AttackFirst) {
+                    Thread.sleep(2000);
+                    offense();
+                    Thread.sleep(2000);
+                    defense();
+                } 
+                else {
+                    Thread.sleep(2000);
+                    defense();
+                    Thread.sleep(2000);
+                    offense();
+                }
+                if (player.getHealth() == 0) {
+                    notDead = twisting();
+                    if(notDead) {
+                        System.out.println("You feel embarassed and furious that a sandwich was about to eat you. You unleash your inner potential and feel refreshed again. Health restored to full!");
+                        player.setHealth(100); 
+                    }
+                }
+            }
+            if (fightingEnemy.getHealth() == 0) return true;
+            if (!notDead) return false;
+            return true;
     }
 
 
@@ -313,62 +398,104 @@ public class UIClient extends ConcreteObserver implements Runnable{
         "To play the game, type START\nENJOY!");
         while(!(commInput[0].equalsIgnoreCase("START"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("Type START");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
+        isUpdate = false;
         System.out.println("You wake up one day, doing what you do every time. You take your daily shower, brush your teeth, and get on with your day." + 
-        "Soon, it's 2 PM in the afternoon, and you are STARVING! Maybe you can check what your fridge has for you today.\n" +
+        " Soon, it's 2 PM in the afternoon, and you are STARVING! Maybe you can check what your fridge has for you today.\n" +
         "(Hint: Type \"use fridge\")");
         while(!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("fridge"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("(Hint: Type \"use fridge\")");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
+        isUpdate = false;
         player.addItem(Bread.getInstance());
         Player.currentLocation.items.remove(Bread.getInstance());
-        System.out.println("You opened the fridge. There you find 2 peices of what you assume is bread? It looks like bread, feels like bread, and smells like bread" +
-        "However, the color of this \'bread\' is golden. The problem is that you don't remember seeing this bread in your fridge before."+
-        "Not only that, but it seems like there is some kind of note right under one of the pieces. All you understand from this note though is the first 2 words:"+
-        "\"LEGENDARY SANDWICH\". Everything else seems like gibberish to you. It might be a good idea for you to go ask your friend Bob, who works in teh super market nearby." +
-        "He was always the type of guy who can answer any question you throw at him.\n"+
+        System.out.println("You open the fridge. There you find 2 peices of what you assume is bread? It looks like bread, feels like bread, and smells like bread; " +
+        "however, the color of this \'bread\' is golden."+
+        " Not only that, but it seems like there is some kind of note right under one of the pieces. All you understand from this note though is the first 2 words which spell"+
+        " \"LEGENDARY SANDWICH\". Everything else seems like gibberish to you. It might be a good idea for you to go ask your friend Bob, who works in the supermarket nearby." +
+        " He's the kind of guy who can answer almost any question you throw at him.\n"+
         "(Hint: type \"go to Road\")");
         while(!(commInput[0].equalsIgnoreCase("go") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Road"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("(Hint: type \"go to Road\")");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
+        isUpdate = false;
         Player.currentLocation = Road.getInstance();
         player.updateNearby();
-        System.out.println("It seems like you haven't been out in a while, since you can't remember the way to the supermarket. Maybe you should stop ordering your groceries from online every now and then.\n" + 
+        System.out.println("It seems like you haven't been out in a while since you can't remember the way to the supermarket. Luckily, the magic word \"nearby\" lets you find the way somehow.\n" + 
         "(Hint: type \"nearby\")");
         while(!(commInput[0].equalsIgnoreCase("nearby"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("(Hint: type \"nearby\")");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
+        isUpdate = false;
         player.checkNearby();
         System.out.println("(Hint: type \"go to Supermarket\")");
         while(!(commInput[0].equalsIgnoreCase("go") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Supermarket"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("(Hint: type \"go to Supermarket\")");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
+        isUpdate = false;
         Player.currentLocation = Supermarket.getInstance();
         player.updateNearby();
-        System.out.println("You enter the Supermarket and find Bob the cashier. Thankfully, he seems to be free at the moment. Maybe you should call him for a samll chat?\n" +
+        System.out.println("You enter the Supermarket and find Bob, the cashier. Thankfully, he seems to be free at the moment. Maybe you should call him for a samll chat?\n" +
         "(Hint: type \"talk to Bob\")");
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("(Hint: type \"talk to Bob\")");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
-        System.out.println("Bob: Look who we have here. Seems like you have something to ask me, right? Or else, you would've never left your house.\n"+
+        isUpdate = false;
+        System.out.println("Bob: Look who we have here. Seems like you have something to ask me, right? Or else, you would've never left your house!\n"+
         "You explain what you found and he seems very interested. He tells you to leave it to him and come back in a second.\n" +
         "(You have completed the tutorial, to continue with the game, interact with Bob again)");
         commInput[0] = "bla";
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
+            if (isUpdate) System.out.println("(Hint: type \"talk to Bob\")");
+            isUpdate = false;
+            while(!isUpdate){
+                Thread.sleep(10);
+            }
         }
-        System.out.println("Bob: I translated everything on the note, so here have a look. If you have any questions, I am right here. Also, you are gonna need this." +
-        "*Bob hands you a stone sword*"+
-        "Bob: After you beat some bosses, come see me again to updgrade the sword.");
+        isUpdate = false;
+        System.out.println("Bob: I translated everything on the note. Here, have a look. If you have any questions, I am right here. Also, you are gonna need this.\n" +
+        "*Bob hands you a stone sword*\n"+
+        "Bob: If you need an upgrade, you know where to find me! Just be warned that it will come with a price next time!");
         player.nextState();
         isUpdate = true;
     }
 
 
     //ending of the game
-    private void endGame() {
+    private void endGame() throws InterruptedException {
         System.out.println("The time has come. You have gathered all the ingredients, all for this sandwich. You really hope that this isn't some sort of prank. "
-        + "It did take a lot of effort to reach this point after all. You take a deep breath as you place all of your ingredients on the table, prepare a dish, and start making the sanwich!");
+        + "It did take a lot of effort to reach this point after all. You take a deep breath as you place all of your ingredients on the table, prepare a dish, and start making the sandwich!");
         boolean timeOver = true;
         Player.getIngredients().clear();
         Player.getIngredients().add(Bread.getInstance());
@@ -392,7 +519,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         System.out.println("Phew, you finally finished the sandwich. Just when you were about to celebrate, you suddenly hear an eerie laughter. "
         + "When you try to find the source, you suddenly notice the sandwich you spent so much effort making float from the plate until it reaches your eye level. "
         + "At first, you think you are hallucinating from hunger. Thats when it starts talking to you: \n"
-        + "Sandwich: HAHAHAHAHAHA, FINALLY I AM BACK. Humans, oh humans. You thought that you can keep me sealed forever, ha? Now that I have finally returned, "
+        + "Sandwich: HAHAHAHAHAHA, FINALLY I, THE SANDWICH EMPEROR, AM BACK. Humans, oh humans. You thought that you can keep me sealed forever, ha? Now that I have finally returned, "
         + "I will make sure that sandwiches will return to their former glory, while annihilating you humans form the surface of earth for good. " 
         + "You keep treating us sandwiches as nothing but food. UNACCEPTABLE! You. Yes you, the human who has awakened me. I will use your blood to annouce my arrival to the world!\n"
         + "You are still confused about whats happening, when all of a sudden the sandwich starts to attack you! Without any other choice, you hold your sword and prepare for battle.");
@@ -407,7 +534,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
             + "ENDING ONE: A tasty sandwich.\n"
             + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH");
         } else {
-            System.out.println("Sandwich: HAHAHAHAHA, you thought you can kill me? What a joke! It took the humans thousands of years to come up with a way to seal me. Let alone kill me. "
+            System.out.println("You have been eaten by the Sandwich Emperor!\n" 
+            + "Sandwich: HAHAHAHAHA, you thought you can kill me? What a joke! It took the humans thousands of years to come up with a way to seal me. Let alone kill me. "
             + "It's time to flip this world upside down!\n"
             + "30 years later...\n" 
             + "It has been 30 years since the disaster has struck the humans on earth. After the Sandwich Emperor has awakened, it has gone around the earth, finding it's brethren. "
@@ -418,21 +546,17 @@ public class UIClient extends ConcreteObserver implements Runnable{
             + "ENDING TWO: The rise of the Sandwich Emperor\n "
             + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH");
         }
+        System.exit(0);
 	}
-
-
-
-
-
 
     @Override
     public void run() {
         Player.currentLocation = House.getInstance();
-        // try {
-        //     tutorial(player);
-        // } catch (InterruptedException e1) {
-        //     e1.printStackTrace();
-        // }
+        try {
+            tutorial(player);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
         while(true){
             try{
                 boolean saved = false;
@@ -457,8 +581,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 if(Player.currentLocation == Cave.getInstance() && Cave.getInstance().blocked){
                     if(player.getEquipped() instanceof FireExtinguisher){
                         double intitialTime = System.currentTimeMillis();
-                        while(System.currentTimeMillis() - intitialTime < 5000.0 && (!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")))){
+                        while(System.currentTimeMillis() - intitialTime < 6000.0 && (!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")))){
                             Thread.sleep(100);
+                            if (isUpdate) System.out.println("(Hint: type \"use extinguisher\")");
+                            isUpdate = false;
+                            while(!isUpdate){
+                                Thread.sleep(10);
+                            }
                         }
                         if(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")) saved = true;
                     }
@@ -489,7 +618,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                             prevLoc = Player.currentLocation;
                                             Player.currentLocation = player.nearby.get(x);
                                             System.out.println(Player.currentLocation.getDescription());
-                                        } else System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
+                                        } else System.out.println("It's too dark in there, maybe you should come back when you find a way to light it up.");
                                     }
                                 } else {
                                     prevLoc = Player.currentLocation;
@@ -522,7 +651,10 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     if (!found) {
                         if(player.getEquipped() != null && player.getEquipped().toString().equalsIgnoreCase(commInput[1])) player.getEquipped().use();
-                        else System.out.println("Use what? I missed what you said there.");
+                        else {
+                            System.out.println("Use what? I missed what you said there.");
+                            System.out.println("(Hint: You must equip an item to use it)");
+                        }
                     }
                     break;
                     case "look":
@@ -532,12 +664,14 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "take":
                     for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
-                        if(Player.currentLocation.items.get(x).toString().equalsIgnoreCase(commInput[1])){
+                        if(Player.currentLocation.items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
                             if(Player.currentLocation.items.get(x).takable){
                                 if (Player.currentLocation.items.get(x) instanceof Ingredient) {
                                     Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
-                                    System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
+                                    System.out.println("You found the LEGENDARY " + Player.currentLocation.items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                     player.addCoins(10);
+                                } else {
+                                    System.out.println("You have picked up a " + Player.currentLocation.items.get(x));
                                 }
                                 player.addItem(Player.currentLocation.items.get(x));
                                 Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
@@ -566,6 +700,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     for(int x = 0; x < player.getInv().size() && !found; x++){
                         if(player.getInv().get(x).toString().equalsIgnoreCase(commInput[1])){
                             player.equip(player.getInv().get(x));
+                            System.out.println("You have equipped " + player.getEquipped());
                             found = true;
                         }
                     }
@@ -578,6 +713,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else System.out.println("There is no enemy to fight here, how about you go punch the wall instead.");
                     break;
                     case "unequip":
+                    System.out.println("You have unequipped " + player.getEquipped());
                     player.unequip();
                     break;
                     case "punch":
@@ -591,6 +727,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else {
                         System.out.println("(Hint: type \"make sanwich\". Note that this can only be typed when you gather all ingredients and return to your house)");
                     }
+                    break;
                     default:
                     System.out.println("Ha? I thought I heard something. Must've been a fly. Those pesky flies!");
                 }

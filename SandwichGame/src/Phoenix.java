@@ -2,8 +2,9 @@ public class Phoenix extends Enemy {
     private static Phoenix instance;
 
     private Phoenix() {
-        health = 100;
-        dmg = 10;
+        baseHealth = 500;
+        health = baseHealth;
+        dmg = 30;
         description = "You have awoken the legendary phoenix! You will pay the price!";
     }
 
@@ -22,4 +23,14 @@ public class Phoenix extends Enemy {
     public void makeTakable() {
         Meat.getInstance().takable = true;;
     }
+
+	@Override
+	public double getAttackDur() {
+		return 3;
+	}
+
+	@Override
+	public double getDodgeDur() {
+		return 1.6;
+	}
 }

@@ -2,8 +2,9 @@ public class Imposter extends Enemy {
     private static Imposter instance;
 
     private Imposter() {
-        health = 100;
-        dmg = 10;
+        baseHealth = 300;
+        health = baseHealth;
+        dmg = 24;
         description = "There is an Imposter among us...";
     }
 
@@ -22,5 +23,15 @@ public class Imposter extends Enemy {
     public void makeTakable() {
         Tomato.getInstance().takable = true;
     }
+
+	@Override
+	public double getAttackDur() {
+		return 4;
+	}
+
+	@Override
+	public double getDodgeDur() {
+		return 1.8;
+	}
 
 }

@@ -2,8 +2,9 @@ public class Scarecrow extends Enemy {
     private static Scarecrow instance;
 
     private Scarecrow() {
-        health = 100;
-        dmg = 10;
+        baseHealth = 100;
+        health = baseHealth;
+        dmg = 15;
         description = "The scarecrow has been here all his life defending the crops from the pesky crows...there may also be something else he is trying to protect...";
     }
 
@@ -22,4 +23,14 @@ public class Scarecrow extends Enemy {
     public void makeTakable() {
         Lettuce.getInstance().takable = true;
     }
+
+	@Override
+	public double getAttackDur() {
+		return 5;
+	}
+
+	@Override
+	public double getDodgeDur() {
+		return 2.5;
+	}
 }

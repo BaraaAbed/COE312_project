@@ -7,7 +7,7 @@ public class Bob extends NPC {
     private String[] commInput;
 
     private Bob() {
-        description = "You find Bob doing the usual at the counter... you can ask him about the ingredients you need";
+        description = "You find Bob doing the usual at the counter... you can talk to him whenever need.";
         commands = new ArrayList<Command>();
         commands.add(new IngredientLocationCommand());
         commands.add(new UpgradeWeaponCommand());

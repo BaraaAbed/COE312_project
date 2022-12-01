@@ -28,8 +28,8 @@ public class UpgradeWeaponCommand implements Command {
             }
         }
         else {
-            System.out.println("Bob: Sorry, you do not have "+upgradePrice+" coins to upgrade your sword");
-            System.out.println("Bob: Go fight some baddies to collect more coins!");
+            System.out.println("Bob: To upgarde your weapon, you need 30 coins. This is a supermarket, not a charity!\n"
+            + "(Hint: picking up an ingredient gives you 10 coins)");
         }
     }
 }

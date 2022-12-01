@@ -27,7 +27,7 @@ public class Player {
         currentLocation = House.getInstance();
         weapon = new LowDamageWeapon(); // starts with stone sword from cashier
         health = 100.0; //change health in death function if you change this
-        dmg = 10.0;
+        dmg = 5.0;
         updateNearby();
         locationLockState = new MapLockedState();
     }
@@ -46,9 +46,8 @@ public class Player {
     //take dmg
     public void takeDmg(double _dmg){
         health -= _dmg;
-        if (health <= 0) {
-            System.out.println("You died! (x_x)");
-            death();
+        if (health < 0) {
+            health = 0;
         }
         else {
             System.out.println("You now have " + health + " health left!");
@@ -65,7 +64,7 @@ public class Player {
         else if ((rand1 + rand2 + rand3) < 0.8) System.out.println("Weak hit! The " + UIClient.fightingEnemy + " partially dodged your hit.");
         else if ((rand1 + rand2 + rand3) < 0.1) System.out.println("You're just unlucky mate. It's like you didn't even attack!");
         double totalDmg = dmg*swingMulti*weapon.getDmgMultiplier(); // using weapon strategy and rng/swing multiplier
-        if (totalDmg < 10) {
+        if (totalDmg < 11) {
             System.out.println("Pro tip: You are supposed to be KILLING the enemy, not tickling them! 0 damage done.");
         }
         else UIClient.fightingEnemy.takeDmg(totalDmg);
@@ -73,9 +72,14 @@ public class Player {
 
     //death stuff
     public void death(){
-        Player.health = 0;// change initial health if you change this
+        respawn();
         //THIS NEEDS CHANGING TO STATE
+
+    }
+
+    public void respawn(){
         currentLocation = House.getInstance();
+        Player.health = 100;
         updateNearby();
     }
 
@@ -102,6 +106,11 @@ public class Player {
     //getter for equipped
     public Item getEquipped(){
         return equipped;
+    }
+
+    //health setter
+    public void setHealth(double newhealth){
+        health = newhealth;
     }
 
     //updates nearby to the arraylist of the current location

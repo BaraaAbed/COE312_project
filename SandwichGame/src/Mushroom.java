@@ -2,7 +2,7 @@ public class Mushroom extends Ingredient {
     private static Mushroom instance;
 
     private Mushroom() {
-        description = "There seems to be a glowing mushroom at the end of the paths.";
+        description = "There seems to be a mysterious mushroom at the end of the paths. That must be the magic mushroom!";
         takable = false;
     }
 
