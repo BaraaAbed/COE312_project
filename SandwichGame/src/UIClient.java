@@ -390,7 +390,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     else {
                         Cave.getInstance().blocked = false;
-                        isUpdate = false;
                     }
                 }
                 while(!isUpdate){
@@ -443,7 +442,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         } 
                     }
                     if (!found) {
-                        if(player.getEquipped().toString().equals(commInput[1])) player.getEquipped().use();
+                        if(player.getEquipped().toString().equalsIgnoreCase(commInput[1])) player.getEquipped().use();
                         else System.out.println("Use what? I missed what you said there.");
                     }
                     break;
@@ -504,7 +503,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "punch":
                     if(commInput[1].equalsIgnoreCase("wall")){
-                        System.out.println("We didn't mean in literally... How about you punch your screen.");
+                        System.out.println("We didn't mean in literally... How about you punch your screen?");
                     }
                     break;
                     default:
