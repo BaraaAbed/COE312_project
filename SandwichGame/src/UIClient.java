@@ -177,13 +177,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 player.updateNearby();
                 Kitchen.getInstance().blocked = true;
             } else {
-                System.out.println("The operation is a bust. Gordon catches on to your act and sends knife straight to your forehead."
+                System.out.println("The operation is a bust. Gordon catches on to your act and sends a knife straight to your forehead."
                 + " It's too late to dodge, and it pierces straight into your head. He then comes to you, grabs two pieces of bread, places your head in between."
                 + " He then asks you:\n"
                 + "Gordon: WHAT ARE YOU!\n"
                 + "For some reason, only one phrase appears in your mind at that moment, and so you shout before blacking out:\n"
                 + "You: AN IDIOT SANDWICH!\n"
-                + "You then slowely die. Die as an idiot sandwich.");
+                + "You then slowly die. Die as an idiot sandwich.");
                 player.death();
             }
             break;
