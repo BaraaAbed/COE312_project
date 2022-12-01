@@ -11,13 +11,13 @@ public class IngredientLocationCommand implements Command {
         }
         else if(p.getState() instanceof MapUnlockedState) {
             System.out.println("Bob: Legendary ingredients' locations:\n"+
-            "Fridge: bread\n"+
-            "Farm: lettuce\n"+
-            "Warehouse: tomato\n"+
-            "Forest: mushroom\n"+
-            "Rat King's castle: cheese\n"+
-            "Cave: meat\n"+
-            "Heck's Kitchen: sauce\n");
+            "Fridge: Golden Bread\n"+
+            "Haunted Farm: Legendary Lettuce\n"+
+            "Abandoned Warehouse: Legendary Tomato\n"+
+            "Forest: Legendary Mushroom\n"+
+            "Rat King's castle: Legendary Cheese\n"+
+            "Volcano Cave: Phoenix Meat\n"+
+            "Heck's Kitchen: Lamb Sauce\n");
         }
     }
 }

@@ -65,12 +65,16 @@ public class Player {
         else if ((rand1 + rand2 + rand3) < 0.8) System.out.println("Weak hit! The " + UIClient.fightingEnemy + " partially dodged your hit.");
         else if ((rand1 + rand2 + rand3) < 0.1) System.out.println("You're just unlucky mate. It's like you didn't even attack!");
         double totalDmg = dmg*swingMulti*weapon.getDmgMultiplier(); // using weapon strategy and rng/swing multiplier
-        UIClient.fightingEnemy.takeDmg(totalDmg);
+        if (totalDmg < 10) {
+            System.out.println("Pro tip: You are supposed to be KILLING the enemy, not tickling them! 0 damage done.");
+        }
+        else UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
     //death stuff
     public void death(){
-        Player.health = 100.0;// change initial health if you change this
+        Player.health = 0;// change initial health if you change this
+        //THIS NEEDS CHANGING TO STATE
         currentLocation = House.getInstance();
         updateNearby();
     }

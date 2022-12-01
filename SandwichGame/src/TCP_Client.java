@@ -190,7 +190,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (acc[index] > maxAcc) { maxAcc = acc[index]; }
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -207,7 +207,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (acc[index] < minAcc) minAcc = acc[index];
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -225,7 +225,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (gyro[index] > maxGyro) maxGyro = gyro[index];
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -242,7 +242,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (gyro[index] < minGyro) minGyro = gyro[index];
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -257,7 +257,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (dBpeak > threshold) return false;
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -311,7 +311,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 }
             }
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -2,7 +2,7 @@ public class Bread extends Ingredient {
     private static Bread instance;
 
     private Bread() {
-        description = "There is some delicious bread in the fridge";
+        description = "There is some golden bread in the fridge";
     }
 
     //gets instance (for singleton)

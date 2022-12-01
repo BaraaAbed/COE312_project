@@ -20,8 +20,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private static UIClient instance;
     public static boolean failedSabo;
     private double dodgeDuration;
+    private double attackDuration;
     private Location prevLoc;
-    
+    private boolean AttackFirst;
 
     //constructor
     private UIClient(ArrayList<ConcreteSubject> subjects){
@@ -36,7 +37,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
         getHeading = false;
         getOrientation = false;
         isUpdate = false;
-        dodgeDuration = 1.0;
+        dodgeDuration = 1.2;
+        attackDuration = 5;
         t = new Thread(this);
         t.start();
     }
@@ -171,6 +173,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 System.out.println("You successfully got the LAMB SAUCE!");
                 player.addCoins(10);
                 System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
+                player.getIngredients().add(Sauce.getInstance());
                 player.addItem(Player.currentLocation.items.get(3));
                 Player.currentLocation.items.remove(3);
                 Player.currentLocation = Road.getInstance();
@@ -232,51 +235,76 @@ public class UIClient extends ConcreteObserver implements Runnable{
             } catch (InterruptedException e) {}
             break;
             default:
+            AttackFirst = rand.nextBoolean();
             System.out.println("You have started a fight with the " + fightingEnemy.toString());
             while(player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
-                Thread.sleep(2000);
-                System.out.println("You are on the offense, swing your sword to attack the " + fightingEnemy + "!");
-                player.attack(TCP_Client.getAvgAcc(5));
-                if (fightingEnemy.getHealth() > 0) {
-                    System.out.println(fightingEnemy + " is attacking! Get ready to dodge:");
+                if (AttackFirst) {
                     Thread.sleep(2000);
-                    boolean failed = false;
-                    for (int x = rand.nextInt(5,10); (x > 0) && !failed; x--) {
-                        switch(rand.nextInt(5)) {
-                            case 0:
-                            System.out.print("Duck! ");
-                            failed = !(TCP_Client.minAccBelowThreshold('Y', dodgeDuration, -2.0));
-                            break;
-                            case 1:
-                            System.out.print("Jump! ");
-                            failed = !(TCP_Client.peakAccAboveThreshold('Y', dodgeDuration, 2.0));
-                            break;
-                            case 2:
-                            System.out.print("Move right! ");
-                            failed = !(TCP_Client.peakAccAboveThreshold('X', dodgeDuration, 2.0));
-                            break;
-                            case 3:
-                            System.out.print("Move left! ");
-                            failed = !(TCP_Client.minAccBelowThreshold('X', dodgeDuration, -2.0));
-                            break;
-                            case 4:
-                            System.out.print("Step back! ");
-                            failed = !(TCP_Client.peakAccAboveThreshold('Z', dodgeDuration, 2.0));
-                            break;
-                        }
-                        Thread.sleep(2000);
-                        if (!failed) System.out.println("✓");
-                        else System.out.println("X");
-                    }
-                    if (!failed) System.out.println("Good dodging! You dodged the " + fightingEnemy + "'s attack succesfully!");
-                    else {
-                        System.out.println("Not good. You moved directly into the " + fightingEnemy + "'s attack!");
-                        fightingEnemy.attack();
-                    }
+                    offense();
+                    Thread.sleep(2000);
+                    defense();
+                } 
+                else {
+                    Thread.sleep(2000);
+                    defense();
+                    Thread.sleep(2000);
+                    offense();
                 }
+             }
+        }
+    }
+
+    private void defense() throws InterruptedException {
+        if (fightingEnemy.getHealth() > 0) {
+            System.out.println(fightingEnemy + " is attacking! Get ready to dodge:");
+            boolean failed = false;
+            for (int x = rand.nextInt(3,7); (x > 0) && !failed; x--) {
+                Thread.sleep(2000);
+                switch(rand.nextInt(5)) {
+                    case 0:
+                    System.out.print("Duck! ");
+                    failed = !(TCP_Client.minAccBelowThreshold('Y', dodgeDuration, -2.0));
+                    break;
+                    case 1:
+                    System.out.print("Jump! ");
+                    failed = !(TCP_Client.peakAccAboveThreshold('Y', dodgeDuration, 2.0));
+                    break;
+                    case 2:
+                    System.out.print("Move right! ");
+                    failed = !(TCP_Client.peakAccAboveThreshold('X', dodgeDuration, 2.0));
+                    break;
+                    case 3:
+                    System.out.print("Move left! ");
+                    failed = !(TCP_Client.minAccBelowThreshold('X', dodgeDuration, -2.0));
+                    break;
+                    case 4:
+                    System.out.print("Step back! ");
+                    failed = !(TCP_Client.peakAccAboveThreshold('Z', dodgeDuration, 2.0));
+                    break;
+                }
+                if (!failed) System.out.println("✓");
+                else System.out.println("X");
+            }
+            if (!failed) System.out.println("Good dodging! You dodged the " + fightingEnemy + "'s attack succesfully!");
+            else {
+                System.out.println("Not good. You moved directly into the " + fightingEnemy + "'s attack!");
+                fightingEnemy.attack();
             }
         }
     }
+
+    private void offense() {
+        System.out.println("You are on the offense, swing your sword to attack the " + fightingEnemy + "!");
+        player.attack(TCP_Client.getAvgAcc(attackDuration));
+    }
+
+    //FinalBossFight
+    public boolean bossFight(){
+
+
+        return true;
+    }
+
 
     //tutorial
     private void tutorial(Player player) throws InterruptedException{
@@ -341,6 +369,60 @@ public class UIClient extends ConcreteObserver implements Runnable{
     }
 
 
+    //ending of the game
+    private void endGame() {
+        System.out.println("The time has come. You have gathered all the ingredients, all for this sandwich. You really hope that this isn't some sort of prank. "
+        + "It did take a lot of effort to reach this point after all. You take a deep breath as you place all of your ingredients on the table, prepare a dish, and start making the sanwich!");
+        boolean timeOver = true;
+        player.getIngredients().clear();
+        player.getIngredients().add(Bread.getInstance());
+        player.getIngredients().add(Lettuce.getInstance());
+        player.getIngredients().add(Tomato.getInstance());
+        player.getIngredients().add(Meat.getInstance());
+        player.getIngredients().add(Cheese.getInstance());
+        player.getIngredients().add(Mushroom.getInstance());
+        player.getIngredients().add(Sauce.getInstance());
+        player.getIngredients().add(Bread.getInstance());
+        while(timeOver){
+            timeOver = false;
+            for(int x = 0; x < player.getIngredients().size() && !timeOver; x++){
+                timeOver = !TCP_Client.putIngredient(10, "legendary " + player.getIngredients().get(x).toString());
+                if(timeOver){
+                    System.out.println("The sandwich got bored from how slow you were and all the ingredients went back into your inventory. "
+                    + "Let's try that again, but FASTER.");
+                }
+            }
+        }
+        System.out.println("Phew, you finally finished the sandwich. Just when you were about to celebrate, you suddenly hear an eerie laughter. "
+        + "When you try to find the source, you suddenly notice the sandwich you spent so much effort making float from the plate until it reaches your eye level. "
+        + "At first, you think you are hallucinating from hunger. Thats when it starts talking to you: \n"
+        + "Sandwich: HAHAHAHAHAHA, FINALLY I AM BACK. Humans, oh humans. You thought that you can keep me sealed forever, ha? Now that I have finally returned, "
+        + "I will make sure that sandwiches will return to their former glory, while annihilating you humans form the surface of earth for good. " 
+        + "You keep treating us sandwiches as nothing but food. UNACCEPTABLE! You. Yes you, the human who has awakened me. I will use your blood to annouce my arrival to the world!\n"
+        + "You are still confused about whats happening, when all of a sudden the sandwich starts to attack you! Without any other choice, you hold your sword and prepare for battle.");
+        boolean battleWon;
+        Player.currentLocation.enemy = FinalBoss.getInstance();
+        fightingEnemy = FinalBoss.getInstance();
+        battleWon = bossFight();
+        if(battleWon){
+            System.out.println("You finally killed the sandwich. This is probably the most effort you have ever spent for a sandwich. "
+            + "Now, you can finally eat it. You take the sandwich and digging in. while eating, you start to ponder about what the sandwich said when it first woke up. "
+            + "Something about glory days for sanwiches and whatnot. But soon, the intense flavors of the sandwich kicks in and you just give up thinking about it. It's been one heck of a journey, and now it is over.\n"
+            + "ENDING ONE: Humans reign supreme.\n"
+            + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH");
+        } else {
+            System.out.println("Sandwich: HAHAHAHAHA, you thought you can kill me? What a joke! It took the humans thousands of years to come up with a way to seal me. Let alone kill me. "
+            + "It's time to flip this world upside down!\n"
+            + "30 years later...\n" 
+            + "It has been 30 years since the disaster has struck the humans on earth. After the Sandwich Emperor has awakened, it has gone around the earth, finding it's brethren. "
+            + "Now the world is ruled by the sandwiches. You have the Sandwich Emperor, the Super Falafel, the King Shawarma, the Assassin Burger, and many more sanwiches taking over the different continents on earth. "
+            + "On this day, there is a group of humans who have just escaped the pursuit of some local sandwiches, are are taking a break near the ruins of what once was the American University of Sharjah. "
+            + "A teenager in this group was looking for a place to sit when all of a sudden, he spotted a piece of paper that looked somewhat like a blueprint of a sword. On the paper were the following words: \n"
+            + "Sandwich Slayer\n"
+            + "ENDING TWO: The rise of the Sandwich Emperor\n "
+            + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH");
+        }
+	}
 
 
 
@@ -507,6 +589,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         System.out.println("We didn't mean in literally... How about you punch your screen?");
                     }
                     break;
+                    case "make":
+                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && Player.currentLocation == House.getInstance()){
+                        endGame();
+                    } else {
+                        System.out.println("(Hint: type \"make sanwich\". Note that this can only be typed when you gather all ingredients and return to your house)");
+                    }
                     default:
                     System.out.println("Ha? I thought I heard something. Must've been a fly. Those pesky flies!");
                 }
