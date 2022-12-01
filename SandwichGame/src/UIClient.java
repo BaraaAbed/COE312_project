@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
-
 public class UIClient extends ConcreteObserver implements Runnable{
     //initializing variables
     public static boolean fighting;
@@ -15,7 +13,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public static boolean getOrientation;
     public static boolean getGyro;
     private Player player;
-    private Scanner scan;
     private Random rand;
     private static UIClient instance;
     public static boolean failedSabo;
@@ -31,7 +28,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
         rand = new Random(System.currentTimeMillis());
         commInput = "lol".split(" ");
         getAcc = false;
-        scan = new Scanner(System.in);
         player = Player.getInstance();
         getDB = false;
         getHeading = false;
@@ -173,7 +169,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 System.out.println("You successfully got the LAMB SAUCE!");
                 player.addCoins(10);
                 System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
-                player.getIngredients().add(Sauce.getInstance());
+                Player.getIngredients().add(Sauce.getInstance());
                 player.addItem(Player.currentLocation.items.get(3));
                 Player.currentLocation.items.remove(3);
                 Player.currentLocation = Road.getInstance();
@@ -374,19 +370,19 @@ public class UIClient extends ConcreteObserver implements Runnable{
         System.out.println("The time has come. You have gathered all the ingredients, all for this sandwich. You really hope that this isn't some sort of prank. "
         + "It did take a lot of effort to reach this point after all. You take a deep breath as you place all of your ingredients on the table, prepare a dish, and start making the sanwich!");
         boolean timeOver = true;
-        player.getIngredients().clear();
-        player.getIngredients().add(Bread.getInstance());
-        player.getIngredients().add(Lettuce.getInstance());
-        player.getIngredients().add(Tomato.getInstance());
-        player.getIngredients().add(Meat.getInstance());
-        player.getIngredients().add(Cheese.getInstance());
-        player.getIngredients().add(Mushroom.getInstance());
-        player.getIngredients().add(Sauce.getInstance());
-        player.getIngredients().add(Bread.getInstance());
+        Player.getIngredients().clear();
+        Player.getIngredients().add(Bread.getInstance());
+        Player.getIngredients().add(Lettuce.getInstance());
+        Player.getIngredients().add(Tomato.getInstance());
+        Player.getIngredients().add(Meat.getInstance());
+        Player.getIngredients().add(Cheese.getInstance());
+        Player.getIngredients().add(Mushroom.getInstance());
+        Player.getIngredients().add(Sauce.getInstance());
+        Player.getIngredients().add(Bread.getInstance());
         while(timeOver){
             timeOver = false;
-            for(int x = 0; x < player.getIngredients().size() && !timeOver; x++){
-                timeOver = !TCP_Client.putIngredient(10, "legendary " + player.getIngredients().get(x).toString());
+            for(int x = 0; x < Player.getIngredients().size() && !timeOver; x++){
+                timeOver = !TCP_Client.putIngredient(10, "legendary " + Player.getIngredients().get(x).toString());
                 if(timeOver){
                     System.out.println("The sandwich got bored from how slow you were and all the ingredients went back into your inventory. "
                     + "Let's try that again, but FASTER.");
@@ -408,7 +404,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             System.out.println("You finally killed the sandwich. This is probably the most effort you have ever spent for a sandwich. "
             + "Now, you can finally eat it. You take the sandwich and digging in. while eating, you start to ponder about what the sandwich said when it first woke up. "
             + "Something about glory days for sanwiches and whatnot. But soon, the intense flavors of the sandwich kicks in and you just give up thinking about it. It's been one heck of a journey, and now it is over.\n"
-            + "ENDING ONE: Humans reign supreme.\n"
+            + "ENDING ONE: A tasty sandwich.\n"
             + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH");
         } else {
             System.out.println("Sandwich: HAHAHAHAHA, you thought you can kill me? What a joke! It took the humans thousands of years to come up with a way to seal me. Let alone kill me. "
@@ -539,9 +535,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         if(Player.currentLocation.items.get(x).toString().equalsIgnoreCase(commInput[1])){
                             if(Player.currentLocation.items.get(x).takable){
                                 if (Player.currentLocation.items.get(x) instanceof Ingredient) {
-                                    player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
+                                    Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
                                     System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
-                                    player.addCoins(10); // ahmad changing later
+                                    player.addCoins(10);
                                 }
                                 player.addItem(Player.currentLocation.items.get(x));
                                 Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
@@ -590,7 +586,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     break;
                     case "make":
-                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && Player.currentLocation == House.getInstance()){
+                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && Player.currentLocation == House.getInstance() && Player.getIngredients().size() == 7){
                         endGame();
                     } else {
                         System.out.println("(Hint: type \"make sanwich\". Note that this can only be typed when you gather all ingredients and return to your house)");

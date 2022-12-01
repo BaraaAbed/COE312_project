@@ -71,7 +71,6 @@ public class Bob extends NPC {
             } catch (InputMismatchException in) {
                 System.out.println("Seems like you have nothing to talk about. How about you get lost then."); option = 3;
             } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         } while (option != 3);

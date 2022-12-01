@@ -2,8 +2,7 @@ public class Sabotaged implements State {
 
     @Override
     public void next(Player player) {
-        // TODO Auto-generated method stub
-        
+        //do nohting
     }
 
     @Override
