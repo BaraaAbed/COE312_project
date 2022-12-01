@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public class Bob extends NPC {
     private static Bob instance;
