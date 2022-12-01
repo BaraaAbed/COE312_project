@@ -100,9 +100,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 oven.setState(new NotSabotaged());
                 fryer.setState(new NotSabotaged());
                 blender.setState(new NotSabotaged());
-            while(!(oven.SaboState instanceof Sabotaged && blender.SaboState instanceof Sabotaged && fryer.SaboState instanceof Sabotaged) && failedSabo){
+            while(!(oven.getState() instanceof Sabotaged && blender.getState() instanceof Sabotaged && fryer.getState() instanceof Sabotaged) && failedSabo){
                 failedSabo = false;
-                if(oven.SaboState instanceof Sabotaged || blender.SaboState instanceof Sabotaged || fryer.SaboState instanceof Sabotaged) System.out.println("You still have a chance, try another station!");
+                if(oven.getState() instanceof Sabotaged || blender.getState() instanceof Sabotaged || fryer.getState() instanceof Sabotaged) System.out.println("You still have a chance, try another station!");
                 System.out.println("Choose between stations A, B, or C to start the operation:");
                 while(!isUpdate){
                     Thread.sleep(100);
@@ -110,7 +110,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 isUpdate = false;
                 switch(commInput[0].toUpperCase()){
                     case "A":
-                    if(oven.SaboState instanceof Sabotaged){
+                    if(oven.getState() instanceof Sabotaged){
                         oven.printStatus();
                         failedSabo = true;
                         continue;
@@ -123,7 +123,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     break;
                     case "B":
-                    if(fryer.SaboState instanceof Sabotaged){
+                    if(fryer.getState() instanceof Sabotaged){
                         fryer.printStatus();
                         failedSabo = true;
                         continue;
@@ -136,7 +136,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     break;
                     case "C":  
-                    if(blender.SaboState instanceof Sabotaged){
+                    if(blender.getState() instanceof Sabotaged){
                         blender.printStatus();
                         failedSabo = true;
                         continue;

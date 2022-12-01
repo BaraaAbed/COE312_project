@@ -1,6 +1,6 @@
 public abstract class HeckItems extends Item {
     //variables
-    public State SaboState = new NotSabotaged();
+    private State SaboState = new NotSabotaged();
 
     //constructor
     public HeckItems(){
@@ -37,5 +37,10 @@ public abstract class HeckItems extends Item {
     // set the state (used by state children)
     public void setState(State s) {
         SaboState = s;
+    }
+
+    //state getter
+    public State getState(){
+        return SaboState;
     }
 }
