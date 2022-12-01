@@ -3,14 +3,12 @@ import java.util.ArrayList;
 public class Warehouse extends Location {
     //initializing variables
     private static Warehouse instance; //singleton
-    private boolean dark;
 
     //constructor
     private Warehouse(){
         description = "silence... The warehouse is dark and quiet, and you hear a suspicious sound...";
         items.add(Tomato.getInstance());
         enemy = Imposter.getInstance();
-        dark = true;
     }
 
     //gets instance (for singleton)
@@ -19,10 +17,6 @@ public class Warehouse extends Location {
         return instance;
     }
 
-    //setter for dark
-    public void setDark(boolean state){
-        dark = state;
-    }
 
     //nearby function
     @Override
