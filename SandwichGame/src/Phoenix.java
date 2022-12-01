@@ -17,4 +17,9 @@ public class Phoenix extends Enemy {
     public String toString() {
         return "Phoenix";
     }
+
+    @Override
+    public void makeTakable() {
+        Meat.getInstance().takable = true;;
+    }
 }

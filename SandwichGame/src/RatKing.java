@@ -17,4 +17,9 @@ public class RatKing extends Enemy {
     public String toString() {
         return "Rat King";
     }
+
+    @Override
+    public void makeTakable() {
+        Cheese.getInstance().takable = true;
+    }
 }

@@ -18,4 +18,9 @@ public class Imposter extends Enemy {
         return "Imposter";
     }
 
+    @Override
+    public void makeTakable() {
+        Tomato.getInstance().takable = true;
+    }
+
 }

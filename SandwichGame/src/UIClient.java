@@ -443,7 +443,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         } 
                     }
                     if (!found) {
-                        if(player.getEquipped().toString().equalsIgnoreCase(commInput[1])) player.getEquipped().use();
+                        if(player.getEquipped() != null && player.getEquipped().toString().equalsIgnoreCase(commInput[1])) player.getEquipped().use();
                         else System.out.println("Use what? I missed what you said there.");
                     }
                     break;
