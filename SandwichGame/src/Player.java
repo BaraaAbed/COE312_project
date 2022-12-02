@@ -16,6 +16,7 @@ public class Player {
     private State locationLockState; // state design pattern
     private int coins; // keep track of num of coins
     private Random rand;
+    private State livingState; // state design pattern
 
     //Constructor
     private Player(){
@@ -30,6 +31,7 @@ public class Player {
         dmg = 5.0;
         updateNearby();
         locationLockState = new MapLockedState();
+        livingState = new AliveState();
     }
 
     //gets instance (for singleton)
@@ -70,14 +72,17 @@ public class Player {
         else UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
-    //death stuff
-    public void death(){
+    // death function
+    public void death() {
+        nextLivingState();
+        System.out.println("Luckily for you though, you are in a video game, so you will respawn at your house.");
         respawn();
-        //THIS NEEDS CHANGING TO STATE
-
     }
 
-    public void respawn(){
+    // respawn function
+    public void respawn() {
+        System.out.println("\nRespawning...");
+        nextLivingState();
         currentLocation = House.getInstance();
         Player.health = 100;
         updateNearby();
@@ -158,7 +163,7 @@ public class Player {
         return ingredients;
     }
 
-    // go to next state (used in main/driver/ui)
+    // go to next state
     public void nextState() {
         locationLockState.next(this);
     }
@@ -173,8 +178,27 @@ public class Player {
         locationLockState = s;
     }
 
-    public State getState(){
+    public State getState() {
         return locationLockState;
+    }
+
+    // print current living state
+    public void printLivingStatus() {
+        livingState.printStatus();
+    }
+
+    // go to next living state
+    public void nextLivingState() {
+        livingState.next(this);
+    }
+
+    // set the living state (used by alive/dead states (children of State))
+    public void setLivingState(State s) {
+        livingState = s;
+    }
+
+    public State getLivingState(){
+        return livingState;
     }
 
     // function to check nearby locations
