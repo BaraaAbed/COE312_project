@@ -128,7 +128,7 @@ public class Player {
         if(equipped != null) System.out.println("Currently Equipped: " + equipped);
         else System.out.println("Currently Equipped: none");
         System.out.println("Weapon: " + sword);
-
+        System.out.println("Coins: " + coins);
     }
 
     //adds item to inv

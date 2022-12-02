@@ -11,7 +11,7 @@ public abstract class HeckItems extends Item {
         System.out.println("Heck's kitchen item sabotaged!");
     }
 
-    public void sabotage(){
+    final public void sabotage(){
         System.out.println("You start messing around until you find a screw which, if removed, could break the station." + 
         "You have to finish this quick if you don't want to get caught.");
         fristDamage();
