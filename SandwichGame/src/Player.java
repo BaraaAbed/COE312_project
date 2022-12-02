@@ -15,6 +15,7 @@ public class Player {
     private static Player instance;//singleton
     private State locationLockState; // state design pattern
     private int coins; // keep track of num of coins
+    private double dBThreshold;
     private Random rand;
     private State livingState; // state design pattern
 
@@ -29,6 +30,7 @@ public class Player {
         weapon = new LowDamageWeapon(); // starts with stone sword from cashier
         health = 100.0; //change health in death function if you change this
         dmg = 5.0;
+        dBThreshold = -0.75;
         updateNearby();
         locationLockState = new MapLockedState();
         livingState = new AliveState();
@@ -66,23 +68,40 @@ public class Player {
         else if ((rand1 + rand2 + rand3) < 0.8) System.out.println("Weak hit! The " + UIClient.fightingEnemy + " partially dodged your hit.");
         else if ((rand1 + rand2 + rand3) < 0.1) System.out.println("You're just unlucky mate. It's like you didn't even attack!");
         double totalDmg = dmg*swingMulti*weapon.getDmgMultiplier(); // using weapon strategy and rng/swing multiplier
-        if (totalDmg < 11) {
+        if (avg[0] + avg[1] + avg[2] < 2) {
             System.out.println("Pro tip: You are supposed to be KILLING the enemy, not tickling them! 0 damage done.");
         }
         else UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
     // death function
-    public void death() {
+    public void death() throws InterruptedException {
         nextLivingState();
-        System.out.println("Luckily for you though, you are in a video game, so you will respawn at your house.");
+        printLivingStatus();
+        Thread.sleep(2000);
+        System.out.println("Welcome to being dead. Sucks to be you! Normally this is the end of the path for any other person; however, you aren't any other person so I'm gonna give you another chance :)."
+                            + "\nBUTTTTTT, It wouldn't be fun to just let you go back, right? For this reason I need you to beg at a certain volume. Good luck!");
+        Thread.sleep(5000);
+        dBThreshold = rand.nextDouble(1, 16);
+        boolean gotThreshold = false;
+        double avg;
+        while (!gotThreshold) {
+            avg = TCP_Client.getAvgSound(2);
+            if(avg < (dBThreshold - 0.25)) System.out.println("Quieter!");
+            else if (avg > (dBThreshold + 0.25)) System.out.println("Louder!");
+            else {
+                gotThreshold = true;
+                System.out.println("You got it!");
+            }
+        }
         respawn();
     }
 
     // respawn function
     public void respawn() {
-        System.out.println("\nRespawning...");
+        System.out.println("Alright I had enough of your begging. I don't want to hear you again, so get back in there!");
         nextLivingState();
+        printLivingStatus();
         currentLocation = House.getInstance();
         Player.health = 100;
         updateNearby();
@@ -230,5 +249,9 @@ public class Player {
 
     public int getCoins() {
         return coins;
+    }
+
+    public void resetHealth(){
+        health = 100;
     }
 }

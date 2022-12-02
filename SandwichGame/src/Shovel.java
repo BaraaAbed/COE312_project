@@ -1,7 +1,8 @@
 public class Shovel extends Item {
 
     Shovel() {
-        description = "There is a shovel in between these crops...perhaps it could be helpful to dig up something...";
+        takable = true;
+        description = "There is a shovel lying down at the entrance of the castle. Perhaps it could be helpful to dig up something...";
     }
 
     public void use() {

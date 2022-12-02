@@ -6,10 +6,12 @@ public class UI extends ConcreteSubject implements Runnable {
     public static Scanner scan;
     private Message msg;
     private static UI instance;
+    private Player player;
 
     //Constructor
     private UI(){
         t = new Thread(this);
+        player = Player.getInstance();
         scan = new Scanner(System.in);
         msg = new Message(this, "Command", null);
         t.start();
@@ -24,8 +26,13 @@ public class UI extends ConcreteSubject implements Runnable {
     @Override
     public void run() {
         while(scan.hasNextLine()){
-            msg.payload = scan.nextLine();
-            publishMessage(msg);
+            if (player.getLivingState() instanceof DeadState) {
+                System.out.println("You are dead! Stop nagging and start begging!");
+            }
+            else {
+                msg.payload = scan.nextLine();
+                publishMessage(msg);
+            }
         }
     }
 

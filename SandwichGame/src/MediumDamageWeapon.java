@@ -1,5 +1,5 @@
 public class MediumDamageWeapon extends Weapon {
     MediumDamageWeapon(){
-        dmgMultiplier = 2;
+        dmgMultiplier = 3;
     }
 }

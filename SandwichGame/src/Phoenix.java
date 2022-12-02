@@ -31,6 +31,6 @@ public class Phoenix extends Enemy {
 
 	@Override
 	public double getDodgeDur() {
-		return 1.6;
+		return 1.4;
 	}
 }

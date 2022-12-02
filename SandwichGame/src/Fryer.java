@@ -10,19 +10,19 @@ public class Fryer extends HeckItems {
 
 	@Override
 	public void fristDamage() {
-        System.out.println("To loosen the screw, rotate it to the right!");
+        System.out.println("To untighten the screw, rotate it to the right!");
 		UIClient.failedSabo = !TCP_Client.minGyroBelowThreshold('Z', 5, -15);
 	}
 
 	@Override
 	public void secondDamage() {
-		System.out.println("To loosen the screw, rotate it to the left!");
+		System.out.println("To remove the screw, rotate it to the left!");
 		UIClient.failedSabo = !TCP_Client.peakGyroAboveThreshold('Z', 5, 15);	
 	}
 
 	@Override
 	public void thirdDamage() {
-		System.out.println("To loosen the screw, shake it quickly!");
+		System.out.println("To bash the fryer, shake it quickly!");
 		UIClient.failedSabo = !TCP_Client.avgAccAboveThreshold('X', 5, 3.5);
 	}
 

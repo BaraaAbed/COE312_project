@@ -11,11 +11,14 @@ public abstract class HeckItems extends Item {
         System.out.println("Heck's kitchen item sabotaged!");
     }
 
-    final public void sabotage(){
+    final public void sabotage() throws InterruptedException{
         System.out.println("You start messing around until you find a screw which, if removed, could break the station." + 
-        "You have to finish this quick if you don't want to get caught.");
+        " You have to finish this quick if you don't want to get caught.");
+        Thread.sleep(3000);
         fristDamage();
+        Thread.sleep(2000);
         if(!UIClient.failedSabo) secondDamage();
+        Thread.sleep(2000);
         if(!UIClient.failedSabo) thirdDamage();
         if(!UIClient.failedSabo) System.out.println("Successfully Sabotaged");
     }

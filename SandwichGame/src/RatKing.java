@@ -31,6 +31,6 @@ public class RatKing extends Enemy {
 
 	@Override
 	public double getDodgeDur() {
-		return 2;
+		return 1.8;
 	}
 }

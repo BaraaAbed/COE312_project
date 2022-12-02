@@ -4,7 +4,7 @@ public class DeadState implements State {
     }
 
     public void printStatus() {
-        System.out.println("\nYou are now dead.");
+        System.out.println("You died!");
     }
 
     public void next(HeckItems heckItems) {

@@ -168,10 +168,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
             }
             
             if (!failedSabo){
-                System.out.println("You successfully got the LAMB SAUCE!");
+                System.out.println("You have successfully got the LAMB SAUCE! You ran back to the road.");
                 player.addCoins(10);
                 System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
                 System.out.println("You now have "+player.getCoins()+" coins!");
+                Thread.sleep(4000);
+                System.out.println("In the background you hear Gordon screaming: WHERE IS THE LAMBBBBB SAAAAAAUUUUUCCCCCEEEEEE!!!!!!");
                 Player.getIngredients().add(Sauce.getInstance());
                 player.addItem(Player.currentLocation.items.get(3));
                 Player.currentLocation.items.remove(3);
@@ -197,7 +199,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             }
             System.out.println("You were just about to approach the gnome when all of a sudden you hear:\n"
             +"Welcome to The Path of the GNOME! As you can see, there are two paths up ahead. The rules are simple, you have to choose the path that doesn't have a gnome waiting there." 
-            +" To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast six times. Otherwise, you will die. The path of the gnome is always changing, so good luck! Because you will need it.");
+            +" To reach the magic mushroom at the end of the paths, you need to avoid the gnome atleast six out of ten times. Otherwise, you will die. The path of the gnome is always changing, so good luck! Because you will need it.");
             try{
                 for(int x = 0; x < paths.size() && counter < 5; x++){
                     isUpdate = false;
@@ -246,7 +248,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             System.out.println("You have started a fight with the " + fightingEnemy.toString());
             attackDuration = fightingEnemy.getAttackDur();
             dodgeDuration = fightingEnemy.getDodgeDur();
-            while(Player.currentLocation == House.getInstance() && player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
+            while(Player.currentLocation != House.getInstance() && player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
                 if (AttackFirst) {
                     Thread.sleep(2000);
                     offense();
@@ -261,7 +263,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 }
             }
             if (player.getHealth() == 0) {
-                System.out.println("You died! (x_x)");
                 player.death();
             }
         }
@@ -486,14 +487,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         isUpdate = false;
         System.out.println("Bob: I translated everything on the note. Here, have a look.\n\n"+
-        "✧･ﾟ: *✧･ﾟ:* LEGENDARY SANDWICH *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*    Golden Bread    *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*  Legendary Lettuce *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*  Legendary Tomato  *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*   Magic Mushroom   *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*  Legendary Cheese  *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*    Phoenix Meat    *:･ﾟ✧*:･ﾟ✧\n\n"+
-        "✧･ﾟ: *✧･ﾟ:*     Lamb Sauce     *:･ﾟ✧*:･ﾟ✧\n\n"+
+        "________________________________________\n"+
+        "|~~~~~~~~~ LEGENDARY SANDWICH ~~~~~~~~~|\n"+
+        "|   ***       Golden Bread       ***   |\n"+
+        "|   ***     Legendary Lettuce    ***   |\n"+
+        "|   ***     Legendary Tomato     ***   |\n"+
+        "|   ***      Magic Mushroom      ***   |\n"+
+        "|   ***     Legendary Cheese     ***   |\n"+
+        "|   ***       Phoenix Meat       ***   |\n"+
+        "|   ***        Lamb Sauce        ***   |\n"+
+        "|______________________________________|\n\n"+
         "If you have any questions, I am right here. Also, you are gonna need this.\n" +
         "*Bob hands you a stone sword*\n"+
         "Bob: This might come in handy *wink*. If you need an upgrade, you know where to find me! Just be warned that it will come with a price next time!");
@@ -569,8 +572,10 @@ public class UIClient extends ConcreteObserver implements Runnable{
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
+        //INPUT SECTION OF THE GAME
         while(true){
             try{
+                while(player.getLivingState() instanceof DeadState);
                 boolean saved = false;
                 if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
                     System.out.println("Even though you knew you shouldn't, you still did it. Unsuprisingly, you have been stabbed in the back. 10 times.\n" +
@@ -578,7 +583,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     player.death();
                 }
                 if(Player.currentLocation == Sewers.getInstance()){
-                    if(TCP_Client.avgAccAboveThreshold('X', 5, 3.5)){
+                    if(TCP_Client.avgAccAboveThreshold('Y', 5, 3.5)){
                         System.out.println("You have successfully escaped the rats!");
                         if(prevLoc == Road.getInstance()) Player.currentLocation = RatHouse.getInstance();
                         else Player.currentLocation = Road.getInstance();
@@ -587,6 +592,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else {
                         System.out.println("You are not fast enough, and soon rats catch up to you. There is no escape anymore.\n" 
                         + "You died, becoming dinner for the hungry swarm of rats.");
+                        Thread.sleep(3000);
                         player.death();
                     }
                 }
@@ -624,7 +630,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                             if(player.nearby.get(x).toString().equalsIgnoreCase(commInput[2])){
                                 if(player.nearby.get(x) == Warehouse.getInstance()){
                                     if(!(player.getEquipped() instanceof Torch)){
-                                        System.out.println("It's too dark in there, maybe I should come back when I find a way to light it up.");
+                                        System.out.println("It's too dark in there, maybe you should come back when you find a way to light it up.");
                                     } else {
                                         if(Torch.on){
                                             prevLoc = Player.currentLocation;
@@ -679,15 +685,27 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         if(Player.currentLocation.items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
                             if(Player.currentLocation.items.get(x).takable){
                                 if (Player.currentLocation.items.get(x) instanceof Ingredient) {
-                                    Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
-                                    System.out.println("You found the LEGENDARY " + Player.currentLocation.items.get(x).toString().toUpperCase() + ", you got 10 coins.");
-                                    player.addCoins(10);
-                                    System.out.println("You now have "+player.getCoins()+" coins!");
+                                    if (Player.currentLocation.items.get(x) instanceof Lettuce) {
+                                        if (player.getEquipped() instanceof Shovel) {
+                                            player.getEquipped().use();
+                                            Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
+                                            System.out.println("You found the LEGENDARY " + Player.currentLocation.items.get(x).toString().toUpperCase() + ", you got 10 coins.");
+                                            player.addCoins(10);
+                                            System.out.println("You now have "+player.getCoins()+" coins!");
+                                        } else {
+                                            System.out.println("The lettuce is burried underground. You must equip a shovel to dig it up first!");
+                                        }
+                                    } else {
+                                        Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
+                                        System.out.println("You found the LEGENDARY " + Player.currentLocation.items.get(x).toString().toUpperCase() + ", you got 10 coins.");
+                                        player.addCoins(10);
+                                        System.out.println("You now have "+player.getCoins()+" coins!");
+                                    }
                                 } else {
                                     System.out.println("You have picked up a " + Player.currentLocation.items.get(x));
+                                    player.addItem(Player.currentLocation.items.get(x));
+                                    Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
                                 }
-                                player.addItem(Player.currentLocation.items.get(x));
-                                Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
                             } else System.out.println("This item can't be taken");
                             found = true;
                         } 
@@ -719,6 +737,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     if (!found) System.out.println("Equip what now? I missed what you said there.");
                     break;
+                    case "kill":
                     case "fight":
                     fightingEnemy = Player.currentLocation.enemy;
                     if (fightingEnemy != null){
@@ -731,11 +750,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "punch":
                     if(commInput[1].equalsIgnoreCase("wall")){
-                        System.out.println("We didn't mean it literally...how about you punch your screen?");
+                        System.out.println("I didn't mean it literally... How about you punch your screen?");
                     }
                     break;
                     case "make":
                     if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && Player.currentLocation == House.getInstance() && Player.getIngredients().size() == 7){
+                        player.nextState();
                         endGame();
                     } else {
                         System.out.println("(Hint: type \"make sandwich\". Note that this can only be typed when you have gathered all the legendary ingredients and have returned to your house)");

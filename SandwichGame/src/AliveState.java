@@ -4,7 +4,7 @@ public class AliveState implements State {
     }
 
     public void printStatus() {
-        System.out.println("You are now alive and livin'!\n");
+        System.out.println("You are now alive and kickin'! You have respawned in your house.");
     }
 
     public void next(HeckItems heckItems) {

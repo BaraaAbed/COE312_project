@@ -16,13 +16,13 @@ public class Oven extends HeckItems {
 
 	@Override
 	public void secondDamage() {
-        System.out.println("To loosen the screw, shake it quickly!");
+        System.out.println("To mess up the controls, shake it quickly!");
 		UIClient.failedSabo = !TCP_Client.avgAccAboveThreshold('X', 5, 3.5);
 	}
 
 	@Override
 	public void thirdDamage() {
-        System.out.println("To loosen the screw, rotate it to the right!");
+        System.out.println("To remove the screw, rotate it to the right!");
 		UIClient.failedSabo = !TCP_Client.minGyroBelowThreshold('Z', 5, -15);	
 	}
 }

@@ -5,7 +5,7 @@ public class Scarecrow extends Enemy {
         baseHealth = 100;
         health = baseHealth;
         dmg = 15;
-        description = "The scarecrow has been here all his life defending the crops from the pesky crows...there may also be something else he is trying to protect...";
+        description = "The scarecrow has been here all his life defending the crops from the pesky crows. There may also be something else he is trying to protect...";
     }
 
     //gets instance (for singleton)
@@ -31,6 +31,6 @@ public class Scarecrow extends Enemy {
 
 	@Override
 	public double getDodgeDur() {
-		return 2.5;
+		return 2;
 	}
 }

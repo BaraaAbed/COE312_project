@@ -6,7 +6,7 @@ public class Farm extends Location {
 
     //constructor
     private Farm() {
-        description = "You are in the Abandoned Farm. The atmoshphere here is a bit too spooky for your liking, you should do what you have to do here leave as soon as possible.";
+        description = "You are in the Abandoned Farm. The atmoshphere here is a bit too spooky for your liking, you should do what you have to do here and leave as soon as possible.";
         items.add(new Torch());
         items.add(Lettuce.getInstance());
         enemy = Scarecrow.getInstance();

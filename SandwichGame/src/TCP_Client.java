@@ -264,6 +264,22 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         }
         return true;
     }
+    static double getAvgSound(double duration) {
+        double initTime = System.currentTimeMillis();
+        double totalDB = 0;
+        double x = 0;
+        while ((System.currentTimeMillis() - initTime) < duration*1000) {
+            totalDB += Math.abs(dBpeak);
+            x++;
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+        double avgDB = totalDB/(double) x;
+        return avgDB;
+    }
     //useful for putting ingredients
     //Current pattern: tilt device to "landscape left" -> tilt device to "landscape right" -> move device down
     //ingName used to print. pass in legendary X

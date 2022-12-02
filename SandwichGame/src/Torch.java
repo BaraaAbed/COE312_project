@@ -3,7 +3,7 @@ public class Torch extends Item {
 
     Torch(){
         on = false;
-        description = "There is a torch half buried into the dirt... It might be useful for later, maybe you should pick it up.";
+        description = "There is a torch half buried into the dirt. It might be useful for later, maybe you should pick it up.";
     }
 
     public void use() {
