@@ -1,17 +1,20 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UI extends ConcreteSubject implements Runnable {
     //Variables
     public Thread t;
-    public static Scanner scan;
+    public Scanner scan;
     private Message msg;
     private static UI instance;
     private Player player;
+    private boolean cheatMode;
 
     //Constructor
     private UI(){
         t = new Thread(this);
         player = Player.getInstance();
+        cheatMode = false;
         scan = new Scanner(System.in);
         msg = new Message(this, "Command", null);
         t.start();
@@ -31,7 +34,17 @@ public class UI extends ConcreteSubject implements Runnable {
             }
             else {
                 msg.payload = scan.nextLine();
-                publishMessage(msg);
+                if (!cheatMode && msg.payload.toString().equalsIgnoreCase("I want to cheat so let me be! 88651")) { //used for quick debugging of final boss
+                    System.out.println("Cheat mode active.");
+                    cheatMode = true;
+                    player.getIngredients().add(Lettuce.getInstance());
+                    player.getIngredients().add(Tomato.getInstance());
+                    player.getIngredients().add(Sauce.getInstance());
+                    player.getIngredients().add(Mushroom.getInstance());
+                    player.getIngredients().add(Cheese.getInstance());
+                    player.getIngredients().add(Meat.getInstance());
+                    player.setWeapon(new HighDamageWeapon());
+                } else publishMessage(msg);
             }
         }
     }

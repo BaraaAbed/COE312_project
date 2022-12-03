@@ -11,18 +11,18 @@ public class Oven extends HeckItems {
     @Override
 	public void firstDamage() {
         System.out.println("To loosen the screw, rotate it to the left!");
-		UIClient.failedSabo = !TCP_Client.peakGyroAboveThreshold('Z', 5, 15);
+		UIClient.failedSabo = !TCP_Client.getInstance().peakGyroAboveThreshold('Z', 5, 15);
 	}
 
 	@Override
 	public void secondDamage() {
         System.out.println("To mess up the controls, shake it quickly!");
-		UIClient.failedSabo = !TCP_Client.avgAccAboveThreshold('X', 5, 3.5);
+		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('X', 5, 3.5);
 	}
 
 	@Override
 	public void thirdDamage() {
         System.out.println("To remove the screw, rotate it to the right!");
-		UIClient.failedSabo = !TCP_Client.minGyroBelowThreshold('Z', 5, -15);	
+		UIClient.failedSabo = !TCP_Client.getInstance().minGyroBelowThreshold('Z', 5, -15);	
 	}
 }

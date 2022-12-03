@@ -4,13 +4,13 @@ import java.util.Random;
 public class Player {
     //initialzing variables
     private Location currentLocation;
-    private static double health;
+    private double health;
     public ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
     private Item equipped;
     public String sword;
     public Weapon weapon; // strategy design pattern
-    private static ArrayList<Ingredient> ingredients;
+    private ArrayList<Ingredient> ingredients;
     private double dmg;//base dmg
     private static Player instance;//singleton
     private State locationLockState; // state design pattern
@@ -104,7 +104,7 @@ public class Player {
         boolean gotThreshold = false;
         double avg;
         while (!gotThreshold) {
-            avg = TCP_Client.getAvgSound(2);
+            avg = TCP_Client.getInstance().getAvgSound(2);
             if(avg < (dBThreshold - 0.6)) System.out.println("Quieter!");
             else if (avg > (dBThreshold + 0.6)) System.out.println("Louder!");
             else {
@@ -121,7 +121,7 @@ public class Player {
         nextLivingState();
         printLivingStatus();
         currentLocation = House.getInstance();
-        Player.health = 100;
+        health = 100;
         updateNearby();
     }
 
@@ -193,7 +193,7 @@ public class Player {
     }
 
     // getter for ingredients array
-    public static ArrayList<Ingredient> getIngredients(){
+    public ArrayList<Ingredient> getIngredients(){
         return ingredients;
     }
 

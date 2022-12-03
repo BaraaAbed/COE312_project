@@ -56,16 +56,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
             isUpdate = true;
             break;
             case "acc":
-            System.out.println("accX: " + m.arrPaylaod[0] + " | accY: " + m.arrPaylaod[1] + " | accZ: " + m.arrPaylaod[2] + " | Timestamp: " + TCP_Client.timeStamp);
+            System.out.println("accX: " + m.arrPaylaod[0] + " | accY: " + m.arrPaylaod[1] + " | accZ: " + m.arrPaylaod[2] + " | Timestamp: " + TCP_Client.getInstance().getTimeStamp());
             break;
             case "dB":
-            System.out.println("Peak: " + m.payload + " | Timestamp: " + TCP_Client.timeStamp);
+            System.out.println("Peak: " + m.payload + " | Timestamp: " + TCP_Client.getInstance().getTimeStamp());
             break;
             case "heading":
-            System.out.println("headingX: " + m.arrPaylaod[0] + " | headingY: " + m.arrPaylaod[1] + " | headingZ: " + m.arrPaylaod[2] + " | Timestamp: " + TCP_Client.timeStamp);
+            System.out.println("headingX: " + m.arrPaylaod[0] + " | headingY: " + m.arrPaylaod[1] + " | headingZ: " + m.arrPaylaod[2] + " | Timestamp: " + TCP_Client.getInstance().getTimeStamp());
             break;
             case "orientation":
-            System.out.println("Orientation: " + m.payload + " | Timestamp: " + TCP_Client.timeStamp);
+            System.out.println("Orientation: " + m.payload + " | Timestamp: " + TCP_Client.getInstance().getTimeStamp());
             break;
         }
     }
@@ -158,14 +158,14 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 if(!failedSabo){
                     System.out.println("Gordon Ramsay just went to check on the station, take this chance to SILENTLY sneak behind him and steal the LAMB SAUCE!");
                     Thread.sleep(3000);
-                    failedSabo = !TCP_Client.peakSoundBelowThreshold(10, -25);
+                    failedSabo = !TCP_Client.getInstance().peakSoundBelowThreshold(10, -25);
                     if(failedSabo) System.out.println("You were not quiet enough, and was noticed by Gordon. Thankfully, he mistunderstands it as you running away from the station to not take the blame, so he does nothing.");
                 }
             }
             if (!failedSabo){
                     System.out.println("You got the LAMB SAUCE, now quickly run away before Gordon catches you!");
                     Thread.sleep(1500);
-                    failedSabo = !TCP_Client.avgAccAboveThreshold('X', 5, 3.5);
+                    failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('X', 5, 3.5);
             }
             
             if (!failedSabo){
@@ -175,7 +175,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 System.out.println("You now have "+player.getCoins()+" coins!");
                 Thread.sleep(4000);
                 System.out.println("In the background you hear Gordon screaming: WHERE IS THE LAMBBBBB SAAAAAAUUUUUCCCCCEEEEEE!!!!!!");
-                Player.getIngredients().add(Sauce.getInstance());
+                player.getIngredients().add(Sauce.getInstance());
                 player.addItem(player.getCurrentLocation().items.get(3));
                 player.getCurrentLocation().items.remove(3);
                 player.setCurrentLocation(Road.getInstance());
@@ -278,23 +278,23 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 switch(rand.nextInt(5)) {
                     case 0:
                     System.out.print("Duck! ");
-                    failed = !(TCP_Client.minAccBelowThreshold('Y', dodgeDuration, -2.0));
+                    failed = !(TCP_Client.getInstance().minAccBelowThreshold('Y', dodgeDuration, -2.0));
                     break;
                     case 1:
                     System.out.print("Jump! ");
-                    failed = !(TCP_Client.peakAccAboveThreshold('Y', dodgeDuration, 2.0));
+                    failed = !(TCP_Client.getInstance().peakAccAboveThreshold('Y', dodgeDuration, 2.0));
                     break;
                     case 2:
                     System.out.print("Move right! ");
-                    failed = !(TCP_Client.peakAccAboveThreshold('X', dodgeDuration, 2.0));
+                    failed = !(TCP_Client.getInstance().peakAccAboveThreshold('X', dodgeDuration, 2.0));
                     break;
                     case 3:
                     System.out.print("Move left! ");
-                    failed = !(TCP_Client.minAccBelowThreshold('X', dodgeDuration, -2.0));
+                    failed = !(TCP_Client.getInstance().minAccBelowThreshold('X', dodgeDuration, -2.0));
                     break;
                     case 4:
                     System.out.print("Step back! ");
-                    failed = !(TCP_Client.peakAccAboveThreshold('Z', dodgeDuration, 2.0));
+                    failed = !(TCP_Client.getInstance().peakAccAboveThreshold('Z', dodgeDuration, 2.0));
                     break;
                 }
                 if (!failed) System.out.println("O");
@@ -311,7 +311,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private void offense() {
         if (player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0) {
             System.out.println("You are on the offense, swing your sword to attack the " + fightingEnemy + "!");
-            player.attack(TCP_Client.getAvgAcc(attackDuration));
+            player.attack(TCP_Client.getInstance().getAvgAcc(attackDuration));
         }
     }
 
@@ -326,19 +326,19 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 switch(rand.nextInt(5)) {
                     case 0:
                     System.out.print("Twist right! ");
-                    failed = !(TCP_Client.minGyroBelowThreshold('Y', dodgeDuration, -10.0));
+                    failed = !(TCP_Client.getInstance().minGyroBelowThreshold('Y', dodgeDuration, -10.0));
                     break;
                     case 1:
                     System.out.print("Twist left! ");
-                    failed = !(TCP_Client.peakGyroAboveThreshold('Y', dodgeDuration, 10.0));
+                    failed = !(TCP_Client.getInstance().peakGyroAboveThreshold('Y', dodgeDuration, 10.0));
                     break;
                     case 2:
                     System.out.print("Rotate left! ");
-                    failed = !(TCP_Client.peakGyroAboveThreshold('Z', dodgeDuration, 15.0));
+                    failed = !(TCP_Client.getInstance().peakGyroAboveThreshold('Z', dodgeDuration, 15.0));
                     break;
                     case 3:
                     System.out.print("Rotate right! ");
-                    failed = !(TCP_Client.minGyroBelowThreshold('Z', dodgeDuration, -15.0));
+                    failed = !(TCP_Client.getInstance().minGyroBelowThreshold('Z', dodgeDuration, -15.0));
                     break;
                 }
                 if (!failed) System.out.println("O");
@@ -421,6 +421,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         isUpdate = false;
         player.addItem(Bread.getInstance());
+        player.getIngredients().add(Bread.getInstance());
         player.getCurrentLocation().items.remove(Bread.getInstance());
         System.out.println("You open the fridge. There you find 2 pieces of what you assume is bread? It looks like bread, feels like bread, and smells like bread; " +
         "however, the color of this \'bread\' is golden."+
@@ -511,19 +512,19 @@ public class UIClient extends ConcreteObserver implements Runnable{
         System.out.println("The time has come. You have gathered all the legendary ingredients, all for this legendary sandwich. You really hope that this isn't some sort of prank. "
         + "It did take a lot of effort to reach this point after all. You take a deep breath as you place all of your ingredients on the table, prepare a plate, and start making the sandwich!");
         boolean timeOver = true;
-        Player.getIngredients().clear();
-        Player.getIngredients().add(Bread.getInstance());
-        Player.getIngredients().add(Lettuce.getInstance());
-        Player.getIngredients().add(Tomato.getInstance());
-        Player.getIngredients().add(Meat.getInstance());
-        Player.getIngredients().add(Cheese.getInstance());
-        Player.getIngredients().add(Mushroom.getInstance());
-        Player.getIngredients().add(Sauce.getInstance());
-        Player.getIngredients().add(Bread.getInstance());
+        player.getIngredients().clear();
+        player.getIngredients().add(Bread.getInstance());
+        player.getIngredients().add(Lettuce.getInstance());
+        player.getIngredients().add(Tomato.getInstance());
+        player.getIngredients().add(Meat.getInstance());
+        player.getIngredients().add(Cheese.getInstance());
+        player.getIngredients().add(Mushroom.getInstance());
+        player.getIngredients().add(Sauce.getInstance());
+        player.getIngredients().add(Bread.getInstance());
         while(timeOver){
             timeOver = false;
-            for(int x = 0; x < Player.getIngredients().size() && !timeOver; x++){
-                timeOver = !TCP_Client.putIngredient(10, "legendary " + Player.getIngredients().get(x).toString());
+            for(int x = 0; x < player.getIngredients().size() && !timeOver; x++){
+                timeOver = !TCP_Client.getInstance().putIngredient(10, "legendary " + player.getIngredients().get(x).toString());
                 if(timeOver){
                     System.out.println("The sandwich got bored from how slow you were and all the ingredients went back into your inventory. "
                     + "Let's try that again, but FASTER.");
@@ -585,7 +586,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     player.death();
                 }
                 if(player.getCurrentLocation() == Sewers.getInstance()){
-                    if(TCP_Client.avgAccAboveThreshold('Y', 5, 3.5)){
+                    if(TCP_Client.getInstance().avgAccAboveThreshold('Y', 5, 3.5)){
                         System.out.println("You have successfully escaped the rats!");
                         if(prevLoc == Road.getInstance()) player.setCurrentLocation(RatHouse.getInstance());
                         else player.setCurrentLocation(Road.getInstance());
@@ -696,20 +697,24 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                     if (player.getCurrentLocation().items.get(x) instanceof Lettuce) {
                                         if (player.getEquipped() instanceof Shovel) {
                                             player.getEquipped().use();
-                                            Player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
+                                            player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
                                             System.out.println("You found the LEGENDARY " + player.getCurrentLocation().items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                             player.addCoins(10);
                                             System.out.println("You now have "+player.getCoins()+" coins!");
+                                            player.addItem(player.getCurrentLocation().items.get(x));
+                                            player.getCurrentLocation().items.remove(player.getCurrentLocation().items.get(x));
                                         } else {
                                             System.out.println("The lettuce is burried underground. You must equip a shovel to dig it up first!");
                                         }
                                     } else {
-                                        Player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
+                                        player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
                                         System.out.println("You found the LEGENDARY " + player.getCurrentLocation().items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                         player.addCoins(10);
                                         System.out.println("You now have "+player.getCoins()+" coins!");
+                                        player.addItem(player.getCurrentLocation().items.get(x));
+                                        player.getCurrentLocation().items.remove(player.getCurrentLocation().items.get(x));
                                     }
-                                    if (Player.getIngredients().size() == 7) System.out.println("You have collected all ingredients! Go back to your house to make the LEGENDARY SANDWICH!");
+                                    if (player.getIngredients().size() == 7) System.out.println("You have collected all ingredients! Go back to your house to make the LEGENDARY SANDWICH!");
                                 } else {
                                     System.out.println("You have picked up a " + player.getCurrentLocation().items.get(x));
                                     player.addItem(player.getCurrentLocation().items.get(x));
@@ -767,7 +772,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     break;
                     case "make":
-                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && player.getCurrentLocation() == House.getInstance() && Player.getIngredients().size() == 7){
+                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && player.getCurrentLocation() == House.getInstance() && player.getIngredients().size() == 7){
                         player.nextState();
                         endGame();
                     } else {

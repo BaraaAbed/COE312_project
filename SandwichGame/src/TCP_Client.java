@@ -8,19 +8,21 @@ import java.io.*;
 
 public class TCP_Client extends ConcreteSubject implements Runnable {
     //variables
-    Message msg;
-    String host;
-    int port;
-    Thread t;
-    JSONParser parser;
-    static double[] acc;
-    static double timeStamp;
-    static double dBpeak;
-    static int orientation; //ranges from 1 to 6
-    static double heading; //angle ranges from 0 to 360
-    static double[] headingXYZ;
-    static double[] gyro;
-    TCP_Client (){
+    private static TCP_Client instance;//singleton
+    private Message msg;
+    private String host;
+    private int port;
+    private Thread t;
+    private JSONParser parser;
+    private double[] acc;
+    private double timeStamp;
+    private double dBpeak;
+    private int orientation; //ranges from 1 to 6
+    private double heading; //angle ranges from 0 to 360
+    private double[] headingXYZ;
+    private double[] gyro;
+
+    private TCP_Client () {
         this.acc = new double[3]; //X, Y, Z
         this.headingXYZ = new double[3]; //X, Y, Z
         this.gyro = new double[3]; //X, Y, Z
@@ -49,6 +51,12 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         parser = new JSONParser();
         t = new Thread(this);
         t.start();
+    }
+
+    //gets instance (for singleton)
+    public static synchronized TCP_Client getInstance(){
+        if(instance == null) instance = new TCP_Client();
+        return instance;
     }
 
     @Override
@@ -117,7 +125,35 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
 		}
 	}
 
-    static int getIndexFromDir(char dir) {
+    public double[] getAcc() {
+        return acc;
+    }
+
+    public double getTimeStamp() {
+        return timeStamp;
+    }
+
+    public double getdBpeak() {
+        return dBpeak;
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public double getHeading() {
+        return heading;
+    }
+
+    public double[] getHeadingXYZ() {
+        return headingXYZ;
+    }
+
+    public double[] getGyro() {
+        return gyro;
+    }
+
+    private int getIndexFromDir(char dir) {
         int index;
         switch (dir) {
             case 'X':
@@ -136,7 +172,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     }
 
     //useful for continuous shaking applications
-    static boolean avgAccAboveThreshold(char dir, double duration, double threshold) {
+    public boolean avgAccAboveThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
@@ -156,7 +192,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         else return false;
     }
     //useful for attacks
-    static double[] getAvgAcc(double duration) {
+    public double[] getAvgAcc(double duration) {
         double initTime = System.currentTimeMillis();
         double[] totalAcc = new double[3];
         totalAcc[0] = 0; 
@@ -182,7 +218,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     }
     //anything +/- 2 is considered a large movement
     //useful for dodging (for +ve axis)
-    static boolean peakAccAboveThreshold(char dir, double duration, double threshold) {
+    public boolean peakAccAboveThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
@@ -199,7 +235,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         else return false;
     }
     //useful for dodging (for -ve axis)
-    static boolean minAccBelowThreshold(char dir, double duration, double threshold) {
+    public boolean minAccBelowThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
@@ -217,7 +253,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     }
     //anything +/- 10 is considered a flick for gyro
     //useful for sabotage (for +ve axis)
-    static boolean peakGyroAboveThreshold(char dir, double duration, double threshold) {
+    public boolean peakGyroAboveThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
@@ -234,7 +270,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         else return false;
     }
     //useful for sabotage (for -ve axis)
-    static boolean minGyroBelowThreshold(char dir, double duration, double threshold) {
+    public boolean minGyroBelowThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
@@ -252,7 +288,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     }
     //Sound value is always negative where 0 is full sound. Good threshold is -25 for silence (will change depending on environment)
     //useful for detecting sound
-    static boolean peakSoundBelowThreshold(double duration, double threshold) {
+    public boolean peakSoundBelowThreshold(double duration, double threshold) {
         double initTime = System.currentTimeMillis();
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (dBpeak > threshold) return false;
@@ -264,7 +300,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         }
         return true;
     }
-    static double getAvgSound(double duration) {
+    public double getAvgSound(double duration) {
         double initTime = System.currentTimeMillis();
         double totalDB = 0;
         double x = 0;
@@ -284,7 +320,7 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     //Current pattern: tilt device to "landscape left" -> tilt device to "landscape right" -> move device down
     //ingName used to print. pass in legendary X
     //make sure duration is long (like maybe 10 or 20 secs)
-    static boolean putIngredient(double duration, String ingName) {
+    public boolean putIngredient(double duration, String ingName) {
         double initTime = System.currentTimeMillis();
         double bla = 0;
         boolean LL = false;
