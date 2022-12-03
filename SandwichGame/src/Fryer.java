@@ -9,7 +9,7 @@ public class Fryer extends HeckItems {
     }
 
 	@Override
-	public void fristDamage() {
+	public void firstDamage() {
         System.out.println("To untighten the screw, rotate it to the right!");
 		UIClient.failedSabo = !TCP_Client.minGyroBelowThreshold('Z', 5, -15);
 	}

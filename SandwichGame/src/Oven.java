@@ -9,7 +9,7 @@ public class Oven extends HeckItems {
     }
 
     @Override
-	public void fristDamage() {
+	public void firstDamage() {
         System.out.println("To loosen the screw, rotate it to the left!");
 		UIClient.failedSabo = !TCP_Client.peakGyroAboveThreshold('Z', 5, 15);
 	}

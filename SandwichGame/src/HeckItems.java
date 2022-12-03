@@ -15,7 +15,7 @@ public abstract class HeckItems extends Item {
         System.out.println("You start messing around until you find a screw which, if removed, could break the station." + 
         " You have to finish this quick if you don't want to get caught.");
         Thread.sleep(3000);
-        fristDamage();
+        firstDamage();
         Thread.sleep(2000);
         if(!UIClient.failedSabo) secondDamage();
         Thread.sleep(2000);
@@ -23,7 +23,7 @@ public abstract class HeckItems extends Item {
         if(!UIClient.failedSabo) System.out.println("Successfully Sabotaged");
     }
 
-    public abstract void fristDamage();
+    public abstract void firstDamage();
     public abstract void secondDamage();
     public abstract void thirdDamage();
 

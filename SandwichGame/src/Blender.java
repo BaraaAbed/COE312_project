@@ -9,7 +9,7 @@ public class Blender extends HeckItems {
     }
 
     @Override
-	public void fristDamage() {
+	public void firstDamage() {
         System.out.println("To break the cover, shake it quickly!");
 		UIClient.failedSabo = !TCP_Client.avgAccAboveThreshold('X', 5, 3.5);
 	}
