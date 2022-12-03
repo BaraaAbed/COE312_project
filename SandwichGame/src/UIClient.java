@@ -7,11 +7,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
     public Thread t;
     private static String[] commInput;
     private static boolean isUpdate;
-    public static boolean getAcc;
-    public static boolean getDB;
-    public static boolean getHeading;
-    public static boolean getOrientation;
-    public static boolean getGyro;
     private Player player;
     private Random rand;
     private static UIClient instance;
@@ -29,11 +24,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         failedSabo = true;
         rand = new Random(System.currentTimeMillis());
         commInput = "lol".split(" ");
-        getAcc = false;
         player = Player.getInstance();
-        getDB = false;
-        getHeading = false;
-        getOrientation = false;
         isUpdate = false;
         dodgeDuration = 1.2;
         attackDuration = 5;

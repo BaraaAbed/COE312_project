@@ -80,26 +80,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 gyro[1] = Double.parseDouble((String) jsonObject.get("gyroRotationY"));
                 gyro[2] = Double.parseDouble((String) jsonObject.get("gyroRotationZ"));
                 //sending messages depending on bool values in UIClient
-                if(UIClient.getAcc == true)
-                {
-                    msg = new Message(this, "acc", acc);
-                    publishMessage(msg);
-                }
-                if(UIClient.getDB == true)
-                {
-                    msg = new Message(this, "dB", dBpeak);
-                    publishMessage(msg);
-                }
-                if(UIClient.getOrientation == true)
-                {
-                    msg = new Message(this, "orientation", orientation);
-                    publishMessage(msg);
-                }
-                if(UIClient.getGyro == true)
-                {
-                    msg = new Message(this, "orientation", gyro);
-                    publishMessage(msg);
-                }
 			}
             
 //----------------------------------------------------------------------------
