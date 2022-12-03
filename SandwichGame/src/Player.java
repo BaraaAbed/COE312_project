@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Player {
     //initialzing variables
-    public static Location currentLocation;
+    private Location currentLocation;
     private static double health;
     public ArrayList<Location> nearby;
     private ArrayList<Item> inventory;
@@ -42,9 +42,24 @@ public class Player {
         return instance;
     }
 
+    //currentLocation getter
+    public Location getCurrentLocation(){
+        return currentLocation;
+    }
+
+    //currentLocation setter
+    public void setCurrentLocation(Location l){
+        currentLocation = l;
+    }
+
     //health getter
     public double getHealth(){
         return health;
+    }
+
+    //health setter
+    public void setHealth(double newhealth){
+        health = newhealth;
     }
 
     //take dmg
@@ -132,10 +147,7 @@ public class Player {
         return equipped;
     }
 
-    //health setter
-    public void setHealth(double newhealth){
-        health = newhealth;
-    }
+    
 
     //updates nearby to the arraylist of the current location
     public void updateNearby(){

@@ -33,7 +33,7 @@ public abstract class Enemy {
             health = 0;
             System.out.println("You have successfully killed the " + this);
             Player.getInstance().resetHealth();
-            Player.currentLocation.enemy = null;
+            Player.getInstance().getCurrentLocation().enemy = null;
             makeTakable();
         } else {
             System.out.println("You did " + dec.format(_dmg) + " damage to the enemy! The " + this + " has " + dec.format(health) + " health left!");

@@ -94,9 +94,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
             + "Station C: This has a Blender\n"
             + "Maybe if you can sabotage one of those stations, you could distract Gordon Ramsay long enough to silently steal the LAMB SAUCE!\n"
             + "You: Hmm... Lets use a super cool name for this operation. How about Operation: THAT'S MY SAUCE! Yup, my naming sense is the best.");
-            HeckItems oven = (HeckItems) Player.currentLocation.items.get(0);
-                HeckItems fryer = (HeckItems) Player.currentLocation.items.get(1);
-                HeckItems blender = (HeckItems) Player.currentLocation.items.get(2);
+            HeckItems oven = (HeckItems) player.getCurrentLocation().items.get(0);
+                HeckItems fryer = (HeckItems) player.getCurrentLocation().items.get(1);
+                HeckItems blender = (HeckItems) player.getCurrentLocation().items.get(2);
                 oven.setState(new NotSabotaged());
                 fryer.setState(new NotSabotaged());
                 blender.setState(new NotSabotaged());
@@ -175,9 +175,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 Thread.sleep(4000);
                 System.out.println("In the background you hear Gordon screaming: WHERE IS THE LAMBBBBB SAAAAAAUUUUUCCCCCEEEEEE!!!!!!");
                 Player.getIngredients().add(Sauce.getInstance());
-                player.addItem(Player.currentLocation.items.get(3));
-                Player.currentLocation.items.remove(3);
-                Player.currentLocation = Road.getInstance();
+                player.addItem(player.getCurrentLocation().items.get(3));
+                player.getCurrentLocation().items.remove(3);
+                player.setCurrentLocation(Road.getInstance());
                 player.updateNearby();
                 Kitchen.getInstance().blocked = true;
             } else {
@@ -248,7 +248,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             System.out.println("You have started a fight with the " + fightingEnemy.toString());
             attackDuration = fightingEnemy.getAttackDur();
             dodgeDuration = fightingEnemy.getDodgeDur();
-            while(Player.currentLocation != House.getInstance() && player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
+            while(player.getCurrentLocation() != House.getInstance() && player.getHealth() > 0.0 && fightingEnemy.getHealth() > 0.0){
                 if (AttackFirst) {
                     Thread.sleep(2000);
                     offense();
@@ -420,7 +420,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         }
         isUpdate = false;
         player.addItem(Bread.getInstance());
-        Player.currentLocation.items.remove(Bread.getInstance());
+        player.getCurrentLocation().items.remove(Bread.getInstance());
         System.out.println("You open the fridge. There you find 2 pieces of what you assume is bread? It looks like bread, feels like bread, and smells like bread; " +
         "however, the color of this \'bread\' is golden."+
         " Not only that, but it seems like there is some kind of note right under one of the pieces. All you understand from this note though is the first 2 words which spell"+
@@ -436,7 +436,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             }
         }
         isUpdate = false;
-        Player.currentLocation = Road.getInstance();
+        player.setCurrentLocation(Road.getInstance());
         player.updateNearby();
         System.out.println("It seems like you haven't been out in a while since you can't remember the way to the supermarket. Luckily, the magic word \"nearby\" lets you find the way somehow.\n" + 
         "(Hint: type \"nearby\")");
@@ -460,7 +460,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             }
         }
         isUpdate = false;
-        Player.currentLocation = Supermarket.getInstance();
+        player.setCurrentLocation(Supermarket.getInstance());
         player.updateNearby();
         System.out.println("You enter the Supermarket and find Bob, the cashier. Thankfully, he seems to be free at the moment. Maybe you should call him for a quick chat?\n" +
         "(Hint: type \"talk to Bob\")");
@@ -538,7 +538,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         + "You are still confused about whats happening, when all of a sudden the sandwich starts to attack you!\n"
         + "Left with no other choice, you wield your trusty sword, the blade that stuck by your side through thick and thin and got you through everything up to this point, for one...last...time...FIGHT!");
         boolean battleWon;
-        Player.currentLocation.enemy = FinalBoss.getInstance();
+        player.getCurrentLocation().enemy = FinalBoss.getInstance();
         fightingEnemy = FinalBoss.getInstance();
         battleWon = bossFight();
         if(battleWon){
@@ -566,7 +566,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
 
     @Override
     public void run() {
-        Player.currentLocation = House.getInstance();
+        player.setCurrentLocation(House.getInstance());
         try {
             tutorial(player);
         } catch (InterruptedException e1) {
@@ -577,18 +577,18 @@ public class UIClient extends ConcreteObserver implements Runnable{
             try{
                 while(player.getLivingState() instanceof DeadState);
                 boolean saved = false;
-                if(Player.currentLocation == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
+                if(player.getCurrentLocation() == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
                     System.out.println("Even though you knew you shouldn't, you still did it. Unsuprisingly, you have been stabbed in the back. 10 times.\n" +
                     "You died. Maybe you should curb your curiosity a little next time.");
                     player.death();
                 }
-                if(Player.currentLocation == Sewers.getInstance()){
+                if(player.getCurrentLocation() == Sewers.getInstance()){
                     if(TCP_Client.avgAccAboveThreshold('Y', 5, 3.5)){
                         System.out.println("You have successfully escaped the rats!");
-                        if(prevLoc == Road.getInstance()) Player.currentLocation = RatHouse.getInstance();
-                        else Player.currentLocation = Road.getInstance();
+                        if(prevLoc == Road.getInstance()) player.setCurrentLocation(RatHouse.getInstance());
+                        else player.setCurrentLocation(Road.getInstance());
                         player.updateNearby();
-                        System.out.println(Player.currentLocation.getDescription());
+                        System.out.println(player.getCurrentLocation().getDescription());
                     } else {
                         System.out.println("You are not fast enough, and soon rats catch up to you. There is no escape anymore.\n" 
                         + "You died, becoming dinner for the hungry swarm of rats.");
@@ -596,7 +596,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         player.death();
                     }
                 }
-                if(Player.currentLocation == Cave.getInstance() && Cave.getInstance().blocked){
+                if(player.getCurrentLocation() == Cave.getInstance() && Cave.getInstance().blocked){
                     if(player.getEquipped() instanceof FireExtinguisher){
                         double intitialTime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - intitialTime < 6000.0 && (!(commInput[0].equalsIgnoreCase("use") && commInput[1].equalsIgnoreCase("extinguisher")))){
@@ -633,18 +633,18 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         System.out.println("It's too dark in there, maybe you should come back when you find a way to light it up.");
                                     } else {
                                         if(Torch.on){
-                                            prevLoc = Player.currentLocation;
-                                            Player.currentLocation = player.nearby.get(x);
-                                            System.out.println(Player.currentLocation.getDescription());
+                                            prevLoc = player.getCurrentLocation();
+                                            player.setCurrentLocation(player.nearby.get(x));
+                                            System.out.println(player.getCurrentLocation().getDescription());
                                         } else System.out.println("It's too dark in there, maybe you should come back when you find a way to light it up.");
                                     }
                                 } else {
-                                    prevLoc = Player.currentLocation;
-                                    Player.currentLocation = player.nearby.get(x);
-                                    if(Player.currentLocation == Kitchen.getInstance() && Kitchen.getInstance().blocked){
+                                    prevLoc = player.getCurrentLocation();
+                                    player.setCurrentLocation(player.nearby.get(x));
+                                    if(player.getCurrentLocation() == Kitchen.getInstance() && Kitchen.getInstance().blocked){
                                         System.out.println("You probably don't want to see Gordan Ramsay again, especially after stealing his LAMB SAUCE");
-                                        Player.currentLocation = Road.getInstance();
-                                    } else System.out.println(Player.currentLocation.getDescription());
+                                        player.setCurrentLocation(Road.getInstance());
+                                    } else System.out.println(player.getCurrentLocation().getDescription());
                                 }
                                 if(player.nearby.get(x) == Forest.getInstance()) {
                                     Forest.getInstance().pathCrossed = false;
@@ -661,9 +661,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     player.checkNearby();
                     break;
                     case "use":
-                    for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
-                        if(Player.currentLocation.items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
-                            Player.currentLocation.items.get(x).use();
+                    for(int x = 0; x < player.getCurrentLocation().items.size() && !found; x++){
+                        if(player.getCurrentLocation().items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
+                            player.getCurrentLocation().items.get(x).use();
                             found = true;
                         } 
                     }
@@ -681,30 +681,30 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else System.out.println("(Hint: Try typing \"look around\")");
                     break;
                     case "take":
-                    for(int x = 0; x < Player.currentLocation.items.size() && !found; x++){
-                        if(Player.currentLocation.items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
-                            if(Player.currentLocation.items.get(x).takable){
-                                if (Player.currentLocation.items.get(x) instanceof Ingredient) {
-                                    if (Player.currentLocation.items.get(x) instanceof Lettuce) {
+                    for(int x = 0; x < player.getCurrentLocation().items.size() && !found; x++){
+                        if(player.getCurrentLocation().items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
+                            if(player.getCurrentLocation().items.get(x).takable){
+                                if (player.getCurrentLocation().items.get(x) instanceof Ingredient) {
+                                    if (player.getCurrentLocation().items.get(x) instanceof Lettuce) {
                                         if (player.getEquipped() instanceof Shovel) {
                                             player.getEquipped().use();
-                                            Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
-                                            System.out.println("You found the LEGENDARY " + Player.currentLocation.items.get(x).toString().toUpperCase() + ", you got 10 coins.");
+                                            Player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
+                                            System.out.println("You found the LEGENDARY " + player.getCurrentLocation().items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                             player.addCoins(10);
                                             System.out.println("You now have "+player.getCoins()+" coins!");
                                         } else {
                                             System.out.println("The lettuce is burried underground. You must equip a shovel to dig it up first!");
                                         }
                                     } else {
-                                        Player.getIngredients().add((Ingredient) Player.currentLocation.items.get(x));
-                                        System.out.println("You found the LEGENDARY " + Player.currentLocation.items.get(x).toString().toUpperCase() + ", you got 10 coins.");
+                                        Player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
+                                        System.out.println("You found the LEGENDARY " + player.getCurrentLocation().items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                         player.addCoins(10);
                                         System.out.println("You now have "+player.getCoins()+" coins!");
                                     }
                                 } else {
-                                    System.out.println("You have picked up a " + Player.currentLocation.items.get(x));
-                                    player.addItem(Player.currentLocation.items.get(x));
-                                    Player.currentLocation.items.remove(Player.currentLocation.items.get(x));
+                                    System.out.println("You have picked up a " + player.getCurrentLocation().items.get(x));
+                                    player.addItem(player.getCurrentLocation().items.get(x));
+                                    player.getCurrentLocation().items.remove(player.getCurrentLocation().items.get(x));
                                 }
                             } else System.out.println("This item can't be taken");
                             found = true;
@@ -718,9 +718,9 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "talk":
                     if(commInput[1].equalsIgnoreCase("to")){
-                        for(int x = 0; x < Player.currentLocation.npcs.size() && !found; x++){
-                            if(Player.currentLocation.npcs.get(x).toString().equalsIgnoreCase(commInput[2])){
-                                Player.currentLocation.npcs.get(x).talk();
+                        for(int x = 0; x < player.getCurrentLocation().npcs.size() && !found; x++){
+                            if(player.getCurrentLocation().npcs.get(x).toString().equalsIgnoreCase(commInput[2])){
+                                player.getCurrentLocation().npcs.get(x).talk();
                                 isUpdate = false;
                                 found = true;
                             } 
@@ -739,7 +739,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "kill":
                     case "fight":
-                    fightingEnemy = Player.currentLocation.enemy;
+                    fightingEnemy = player.getCurrentLocation().enemy;
                     if (fightingEnemy != null){
                         fight(player);
                     } else System.out.println("There is no enemy to fight here, how about you go punch the wall instead.");
@@ -754,7 +754,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     break;
                     case "make":
-                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && Player.currentLocation == House.getInstance() && Player.getIngredients().size() == 7){
+                    if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && player.getCurrentLocation() == House.getInstance() && Player.getIngredients().size() == 7){
                         player.nextState();
                         endGame();
                     } else {
