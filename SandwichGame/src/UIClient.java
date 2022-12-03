@@ -17,11 +17,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private boolean AttackFirst;
     private boolean LastChance;
     private int readLoc;
+    private Audio audio;
 
     //constructor
     private UIClient(ArrayList<ConcreteSubject> subjects){
         super(subjects);
         failedSabo = true;
+        audio = new Audio();
         rand = new Random(System.currentTimeMillis());
         commInput = "lol".split(" ");
         player = Player.getInstance();
@@ -559,6 +561,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
 
     @Override
     public void run() {
+        audio.playSound("Sauce");
         player.setCurrentLocation(House.getInstance());
         try {
             tutorial(player);
