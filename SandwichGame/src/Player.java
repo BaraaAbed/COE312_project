@@ -75,18 +75,21 @@ public class Player {
 
     //deals dmg to enemies
     public void attack(double[] avg){
-        double rand1 = rand.nextDouble();
-        double rand2 = rand.nextDouble();
-        double rand3 = rand.nextDouble();
-        double swingMulti = avg[0]*rand1 + avg[1]*rand2 + avg[2]*rand3;
-        if ((rand1 + rand2 + rand3) > 2.6) System.out.println("Critical hit! That must have hurt!");
-        else if ((rand1 + rand2 + rand3) < 0.8) System.out.println("Weak hit! The " + UIClient.fightingEnemy + " partially dodged your hit.");
-        else if ((rand1 + rand2 + rand3) < 0.1) System.out.println("You're just unlucky mate. It's like you didn't even attack!");
-        double totalDmg = dmg*swingMulti*weapon.getDmgMultiplier(); // using weapon strategy and rng/swing multiplier
+        double rng = rand.nextDouble();
+        double swingMulti = avg[0] + avg[1] + avg[2];
+        double totalDmg;
+        if (rng > 0.8) {
+            System.out.println("Critical hit! That must have hurt!");
+            totalDmg = dmg*swingMulti*weapon.getDmgMultiplier()*2.0;
+        } else if (rng < 0.15) {
+            System.out.println("Weak hit! The " + UIClient.fightingEnemy + " partially dodged your hit.");
+            totalDmg = dmg*swingMulti*weapon.getDmgMultiplier()*0.5;
+        } else {
+            totalDmg = dmg*swingMulti*weapon.getDmgMultiplier();
+        }
         if (avg[0] + avg[1] + avg[2] < 2) {
             System.out.println("Pro tip: You are supposed to be KILLING the enemy, not tickling them! 0 damage done.");
-        }
-        else UIClient.fightingEnemy.takeDmg(totalDmg);
+        } else UIClient.fightingEnemy.takeDmg(totalDmg);
     }
 
     // death function
@@ -102,8 +105,8 @@ public class Player {
         double avg;
         while (!gotThreshold) {
             avg = TCP_Client.getAvgSound(2);
-            if(avg < (dBThreshold - 0.25)) System.out.println("Quieter!");
-            else if (avg > (dBThreshold + 0.25)) System.out.println("Louder!");
+            if(avg < (dBThreshold - 0.6)) System.out.println("Quieter!");
+            else if (avg > (dBThreshold + 0.6)) System.out.println("Louder!");
             else {
                 gotThreshold = true;
                 System.out.println("You got it!");

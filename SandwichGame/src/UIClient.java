@@ -21,6 +21,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private Location prevLoc;
     private boolean AttackFirst;
     private boolean LastChance;
+    private int readLoc;
 
     //constructor
     private UIClient(ArrayList<ConcreteSubject> subjects){
@@ -475,7 +476,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         isUpdate = false;
         System.out.println("Bob: Look who we have here. Seems like you have something to ask me, right? Or else, you would've never left your house!\n"+
         "You explain what you found and he seems very interested. He tells you to leave it to him and come back in a second.\n" +
-        "(You have completed the tutorial, to continue with the game, interact with Bob again)");
+        "(You have completed the tutorial. If you need help with the commands type \"help\". To continue with the game, interact with Bob again)");
         commInput[0] = "bla";
         while(!(commInput[0].equalsIgnoreCase("Talk") && commInput[1].equalsIgnoreCase("to") && commInput[2].equalsIgnoreCase("Bob"))){
             Thread.sleep(100);
@@ -575,6 +576,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
         //INPUT SECTION OF THE GAME
         while(true){
             try{
+                readLoc = 1; //;)
                 while(player.getLivingState() instanceof DeadState);
                 boolean saved = false;
                 if(player.getCurrentLocation() == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
@@ -680,9 +682,15 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         player.look();
                     } else System.out.println("(Hint: Try typing \"look around\")");
                     break;
+                    case "pick":
+                    if (commInput[1].equalsIgnoreCase("up")) readLoc = 2;
+                    else {
+                        System.out.println("Ha? I thought I heard something. Must've been a fly. Those pesky flies!");
+                        break;
+                    }
                     case "take":
                     for(int x = 0; x < player.getCurrentLocation().items.size() && !found; x++){
-                        if(player.getCurrentLocation().items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[1])){
+                        if(player.getCurrentLocation().items.get(x).toString().toLowerCase().equalsIgnoreCase(commInput[readLoc])){
                             if(player.getCurrentLocation().items.get(x).takable){
                                 if (player.getCurrentLocation().items.get(x) instanceof Ingredient) {
                                     if (player.getCurrentLocation().items.get(x) instanceof Lettuce) {
@@ -701,6 +709,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         player.addCoins(10);
                                         System.out.println("You now have "+player.getCoins()+" coins!");
                                     }
+                                    if (Player.getIngredients().size() == 7) System.out.println("You have collected all ingredients! Go back to your house to make the LEGENDARY SANDWICH!");
                                 } else {
                                     System.out.println("You have picked up a " + player.getCurrentLocation().items.get(x));
                                     player.addItem(player.getCurrentLocation().items.get(x));
@@ -712,6 +721,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     if (!found) System.out.println("Take what now? I missed what you said there.");
                     break;
+                    case "inv":
                     case "inventory":
                     if(!player.isInvEmpty()) player.showInv();
                     else System.out.println("Wow, to be able to break the game and get an empty inventory, I'm impressed."); 
@@ -727,6 +737,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         }
                     } else System.out.println("(Hint: Try typing \"Talk to <name>\")");
                     break;
+                    case "place":
                     case "equip": 
                     for(int x = 0; x < player.getInv().size() && !found; x++){
                         if(player.getInv().get(x).toString().equalsIgnoreCase(commInput[1])){
@@ -737,6 +748,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     if (!found) System.out.println("Equip what now? I missed what you said there.");
                     break;
+                    case "attack":
                     case "kill":
                     case "fight":
                     fightingEnemy = player.getCurrentLocation().enemy;
@@ -744,6 +756,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         fight(player);
                     } else System.out.println("There is no enemy to fight here, how about you go punch the wall instead.");
                     break;
+                    case "remove":
                     case "unequip":
                     System.out.println("You have unequipped " + player.getEquipped());
                     player.unequip();
@@ -760,6 +773,18 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else {
                         System.out.println("(Hint: type \"make sandwich\". Note that this can only be typed when you have gathered all the legendary ingredients and have returned to your house)");
                     }
+                    break;
+                    case "help":
+                    case "?":
+                    System.out.println("go to (location) - allows you to go to location specified"
+                                        + "\nlook around - gives a description of the current location"
+                                        + "\nnearby - lists all nearby locations that you can go to"
+                                        + "\ntake (item) - allows you to pick up specified item if allowed to"
+                                        + "\nequip (item) - allows you to equip specified item. Item must be in your inventory"
+                                        + "\nunequip - removes currently equipped item"
+                                        + "\nuse (item) - allows you to use specified item. Item must be equiped first"
+                                        + "\nfight (enemy) - allows you to initiate a fight with the specified enemy."
+                                        + "\nmake sandwich - used to make the sandwich when all ingredients are collected");
                     break;
                     default:
                     System.out.println("Ha? I thought I heard something. Must've been a fly. Those pesky flies!");
