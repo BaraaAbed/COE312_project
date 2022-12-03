@@ -1,9 +1,5 @@
-public abstract class Weapon{
+public interface Weapon {
+    
+    public double getDmgMultiplier();
 
-    protected double dmgMultiplier;
-
-    //getter for dmgMultiplier
-    public double getDmgMultiplier(){
-        return dmgMultiplier;
-    }
 }

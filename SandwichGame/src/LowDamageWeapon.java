@@ -1,5 +1,7 @@
-public class LowDamageWeapon extends Weapon {
-    LowDamageWeapon(){
-        dmgMultiplier = 1;
-    }
+public class LowDamageWeapon implements Weapon {
+    
+    public double getDmgMultiplier(){
+        return 1;
+   }
+
 }
