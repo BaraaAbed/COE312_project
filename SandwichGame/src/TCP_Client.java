@@ -18,13 +18,10 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
     private double timeStamp;
     private double dBpeak;
     private int orientation; //ranges from 1 to 6
-    private double heading; //angle ranges from 0 to 360
-    private double[] headingXYZ;
     private double[] gyro;
 
     private TCP_Client () {
         this.acc = new double[3]; //X, Y, Z
-        this.headingXYZ = new double[3]; //X, Y, Z
         this.gyro = new double[3]; //X, Y, Z
         Scanner scan = new Scanner(System.in);
         String c = "bla";
@@ -79,10 +76,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 timeStamp = Double.parseDouble((String) jsonObject.get("accelerometerTimestamp_sinceReboot"));
                 dBpeak = Double.parseDouble((String) jsonObject.get("avAudioRecorderPeakPower"));
                 orientation = Integer.parseInt((String) jsonObject.get("deviceOrientation"));
-                heading = Double.parseDouble((String) jsonObject.get("locationTrueHeading"));
-                headingXYZ[0] = Double.parseDouble((String) jsonObject.get("locationHeadingX"));
-                headingXYZ[1] = Double.parseDouble((String) jsonObject.get("locationHeadingY"));
-                headingXYZ[2] = Double.parseDouble((String) jsonObject.get("locationHeadingZ"));
                 gyro[0] = Double.parseDouble((String) jsonObject.get("gyroRotationX"));
                 gyro[1] = Double.parseDouble((String) jsonObject.get("gyroRotationY"));
                 gyro[2] = Double.parseDouble((String) jsonObject.get("gyroRotationZ"));
@@ -95,11 +88,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 if(UIClient.getDB == true)
                 {
                     msg = new Message(this, "dB", dBpeak);
-                    publishMessage(msg);
-                }
-                if(UIClient.getHeading == true)
-                {
-                    msg = new Message(this, "heading", headingXYZ);
                     publishMessage(msg);
                 }
                 if(UIClient.getOrientation == true)
@@ -139,14 +127,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
 
     public int getOrientation() {
         return orientation;
-    }
-
-    public double getHeading() {
-        return heading;
-    }
-
-    public double[] getHeadingXYZ() {
-        return headingXYZ;
     }
 
     public double[] getGyro() {
@@ -222,7 +202,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
-        double maxAcc = 0; 
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (acc[index] < -threshold) { 
                 for(double x = System.currentTimeMillis()-1; System.currentTimeMillis() - x < 200;) {
