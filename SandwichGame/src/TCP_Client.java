@@ -224,15 +224,24 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         double initTime = System.currentTimeMillis();
         double maxAcc = 0; 
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (acc[index] > maxAcc) { maxAcc = acc[index]; }
+            if (acc[index] < -threshold) { 
+                for(double x = System.currentTimeMillis()-1; System.currentTimeMillis() - x < 200;) {
+                    if (acc[index] > threshold) return true;
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
         }
-        if (maxAcc > threshold) return true;
-        else return false;
+        return false;
     }
     //useful for dodging (for -ve axis)
     public boolean minAccBelowThreshold(char dir, double duration, double threshold) {
@@ -241,7 +250,17 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         double initTime = System.currentTimeMillis();
         double minAcc = 0;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (acc[index] < minAcc) minAcc = acc[index];
+            if (acc[index] > -threshold) { 
+                for(double x = System.currentTimeMillis()-1; System.currentTimeMillis() - x < 200;) {
+                    if (acc[index] < threshold) return true;
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
