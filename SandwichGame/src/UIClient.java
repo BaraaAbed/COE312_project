@@ -561,7 +561,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
 
     @Override
     public void run() {
-        audio.playSound("Sauce");
+        audio.playSound("sauce");
         player.setCurrentLocation(House.getInstance());
         try {
             tutorial(player);
@@ -775,14 +775,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "help":
                     case "?":
-                    System.out.println("go to (location) - allows you to go to location specified"
+                    System.out.println("go to <location> - allows you to go to location specified"
+                                        + "\ntalk to bob - used to begin a conversation with bob the cashier"
                                         + "\nlook around - gives a description of the current location"
                                         + "\nnearby - lists all nearby locations that you can go to"
-                                        + "\ntake (item) - allows you to pick up specified item if allowed to"
-                                        + "\nequip (item) - allows you to equip specified item. Item must be in your inventory"
+                                        + "\ninventory - shows the contents in the your inventory"
+                                        + "\ntake <item> - allows you to pick up specified item if allowed to"
+                                        + "\nequip <item> - allows you to equip specified item. Item must be in your inventory"
                                         + "\nunequip - removes currently equipped item"
-                                        + "\nuse (item) - allows you to use specified item. Item must be equiped first"
-                                        + "\nfight (enemy) - allows you to initiate a fight with the specified enemy."
+                                        + "\nuse <item> - allows you to use specified item. Item must be equiped first"
+                                        + "\nfight <enemy> - allows you to initiate a fight with the specified enemy."
                                         + "\nmake sandwich - used to make the sandwich when all ingredients are collected");
                     break;
                     default:

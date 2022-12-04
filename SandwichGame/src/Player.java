@@ -76,7 +76,7 @@ public class Player {
     //deals dmg to enemies
     public void attack(double[] avg){
         double rng = rand.nextDouble();
-        double swingMulti = avg[0] + avg[1] + avg[2];
+        double swingMulti = (avg[0] + avg[1] + avg[2])*0.7;
         double totalDmg;
         if (rng > 0.8) {
             System.out.println("Critical hit! That must have hurt!");
@@ -87,7 +87,7 @@ public class Player {
         } else {
             totalDmg = dmg*swingMulti*weapon.getDmgMultiplier();
         }
-        if (avg[0] + avg[1] + avg[2] < 2) {
+        if (avg[0] + avg[1] + avg[2] < 3) {
             System.out.println("Pro tip: You are supposed to be KILLING the enemy, not tickling them! 0 damage done.");
         } else UIClient.fightingEnemy.takeDmg(totalDmg);
     }

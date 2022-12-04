@@ -9,20 +9,25 @@ import java.io.*;
 public class TCP_Client extends ConcreteSubject implements Runnable {
     //variables
     private static TCP_Client instance;//singleton
-    private Message msg;
     private String host;
     private int port;
     private Thread t;
     private JSONParser parser;
     private double[] acc;
+    private Object lockTime; //"lockX" objects used to synchronize variables of primitive data types
     private double timeStamp;
+    private Object lockDB;
     private double dBpeak;
+    private Object lockOrientation;
     private int orientation; //ranges from 1 to 6
     private double[] gyro;
 
     private TCP_Client () {
         this.acc = new double[3]; //X, Y, Z
         this.gyro = new double[3]; //X, Y, Z
+        this.lockTime = new Object();
+        this.lockDB = new Object();
+        this.lockOrientation = new Object();
         Scanner scan = new Scanner(System.in);
         String c = "bla";
         do {
@@ -44,7 +49,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 }
             } while (!(c.equalsIgnoreCase("y")) && !(c.equalsIgnoreCase("n")));
         } while(!(c.equalsIgnoreCase("y")));
-        msg = new Message(this, null, null);
         parser = new JSONParser();
         t = new Thread(this);
         t.start();
@@ -70,20 +74,26 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                 //parse String to JSON
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
                 //select a specific value using its key
-				acc[0] = Double.parseDouble((String) jsonObject.get("accelerometerAccelerationX"));
-                acc[1] = Double.parseDouble((String) jsonObject.get("accelerometerAccelerationY"));
-                acc[2] = Double.parseDouble((String) jsonObject.get("accelerometerAccelerationZ"));
-                timeStamp = Double.parseDouble((String) jsonObject.get("accelerometerTimestamp_sinceReboot"));
-                dBpeak = Double.parseDouble((String) jsonObject.get("avAudioRecorderPeakPower"));
-                orientation = Integer.parseInt((String) jsonObject.get("deviceOrientation"));
-                gyro[0] = Double.parseDouble((String) jsonObject.get("gyroRotationX"));
-                gyro[1] = Double.parseDouble((String) jsonObject.get("gyroRotationY"));
-                gyro[2] = Double.parseDouble((String) jsonObject.get("gyroRotationZ"));
-                //sending messages depending on bool values in UIClient
+                synchronized (acc) {
+                    acc[0] = Double.parseDouble((String) jsonObject.get("accelerometerAccelerationX"));
+                    acc[1] = Double.parseDouble((String) jsonObject.get("accelerometerAccelerationY"));
+                    acc[2] = Double.parseDouble((String) jsonObject.get("accelerometerAccelerationZ"));
+                }
+                synchronized (lockTime) {
+                    timeStamp = Double.parseDouble((String) jsonObject.get("accelerometerTimestamp_sinceReboot"));
+                }
+                synchronized (lockDB) {
+                    dBpeak = Double.parseDouble((String) jsonObject.get("avAudioRecorderPeakPower"));
+                }
+                synchronized (lockOrientation) {
+                    orientation = Integer.parseInt((String) jsonObject.get("deviceOrientation"));
+                }
+                synchronized (gyro) {
+                    gyro[0] = Double.parseDouble((String) jsonObject.get("gyroRotationX"));
+                    gyro[1] = Double.parseDouble((String) jsonObject.get("gyroRotationY"));
+                    gyro[2] = Double.parseDouble((String) jsonObject.get("gyroRotationZ"));
+                }
 			}
-            
-//----------------------------------------------------------------------------
-
 		} catch (UnknownHostException ex) {
 			System.out.println("Server not found: " + ex.getMessage());
 		} catch (IOException ex) {
@@ -93,23 +103,23 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
 		}
 	}
 
-    public double[] getAcc() {
+    public synchronized double[] getAcc() {
         return acc;
     }
 
-    public double getTimeStamp() {
+    public synchronized double getTimeStamp() {
         return timeStamp;
     }
 
-    public double getdBpeak() {
+    public synchronized double getdBpeak() {
         return dBpeak;
     }
 
-    public int getOrientation() {
+    public synchronized int getOrientation() {
         return orientation;
     }
 
-    public double[] getGyro() {
+    public synchronized double[] getGyro() {
         return gyro;
     }
 
@@ -131,6 +141,14 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         return index;
     }
 
+    //function made to synchronize the if statement only rather than keeping hold of resources for aprrox. 200ms
+    private boolean check(double LHS, double RHS) {
+        synchronized (acc) {
+            if (LHS < RHS) return true;
+            else return false;
+        }
+    }
+
     //useful for continuous shaking applications
     public boolean avgAccAboveThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
@@ -139,13 +157,10 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         double totalAcc = 0; 
         double x = 0;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            totalAcc += Math.abs(acc[index]);
-            x++;
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            synchronized (acc) {
+                totalAcc += Math.abs(acc[index]);
+                x++;
+            }
         }
         double avgAcc = totalAcc/(double) x;
         if (avgAcc > threshold) return true;
@@ -160,15 +175,12 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         totalAcc[2] = 0; 
         double x = 0;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            totalAcc[0] += Math.abs(acc[0]);
-            totalAcc[1] += Math.abs(acc[1]);
-            totalAcc[2] += Math.abs(acc[2]);
-            x++;
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            synchronized (acc) {
+                totalAcc[0] += Math.abs(acc[0]);
+                totalAcc[1] += Math.abs(acc[1]);
+                totalAcc[2] += Math.abs(acc[2]);
+                x++;
+            }
         }
         double[] avgAcc = new double[3];
         avgAcc[0] = totalAcc[0]/(double) x;
@@ -183,22 +195,12 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (acc[index] < -threshold) { 
+            if (check(acc[index], -threshold)) { 
                 for(double x = System.currentTimeMillis()-1; System.currentTimeMillis() - x < 200;) {
-                    if (acc[index] > threshold) return true;
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    synchronized (acc) { if (acc[index] > threshold) return true; }
                 }
                 return false;
             }
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
         }
         return false;
     }
@@ -207,27 +209,15 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
-        double minAcc = 0;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (acc[index] > -threshold) { 
+            if (check(-threshold, acc[index])) { 
                 for(double x = System.currentTimeMillis()-1; System.currentTimeMillis() - x < 200;) {
-                    if (acc[index] < threshold) return true;
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    synchronized (acc) { if (acc[index] < threshold) return true; }
                 }
                 return false;
             }
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
         }
-        if (minAcc < threshold) return true;
-        else return false;
+        return false;
     }
     //anything +/- 10 is considered a flick for gyro
     //useful for sabotage (for +ve axis)
@@ -235,46 +225,27 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
-        double maxGyro = 0; 
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (gyro[index] > maxGyro) maxGyro = gyro[index];
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            synchronized (gyro) { if (gyro[index] > threshold) return true; }
         }
-        if (maxGyro > threshold) return true;
-        else return false;
+        return false;
     }
     //useful for sabotage (for -ve axis)
     public boolean minGyroBelowThreshold(char dir, double duration, double threshold) {
         int index = getIndexFromDir(dir);
         if (index == 3) return false;
         double initTime = System.currentTimeMillis();
-        double minGyro = 0;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (gyro[index] < minGyro) minGyro = gyro[index];
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            synchronized (gyro) { if (gyro[index] < threshold) return true; }
         }
-        if (minGyro < threshold) return true;
-        else return false;
+        return false;
     }
     //Sound value is always negative where 0 is full sound. Good threshold is -25 for silence (will change depending on environment)
     //useful for detecting sound
     public boolean peakSoundBelowThreshold(double duration, double threshold) {
         double initTime = System.currentTimeMillis();
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            if (dBpeak > threshold) return false;
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            synchronized (lockDB) { if (dBpeak > threshold) return false; }
         }
         return true;
     }
@@ -283,13 +254,10 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         double totalDB = 0;
         double x = 0;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
-            totalDB += Math.abs(dBpeak);
-            x++;
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            synchronized (lockDB) {
+                totalDB += Math.abs(dBpeak);
+                x++;
+            }
         }
         double avgDB = totalDB/(double) x;
         return avgDB;
@@ -306,17 +274,21 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
         boolean shake = false;
         while ((System.currentTimeMillis() - initTime) < duration*1000) {
             if (!LL && !LR && !shake) {
-                if (orientation == 3) {
-                    LL = true;
-                    System.out.println("You picked up the " + ingName + "! Put it on the sandwich before its too late.");
-                    bla = System.currentTimeMillis();
+                synchronized (lockOrientation) {
+                    if (orientation == 3) {
+                        LL = true;
+                        System.out.println("You picked up the " + ingName + "! Put it on the sandwich before its too late.");
+                        bla = System.currentTimeMillis();
+                    }
                 }
             }
             else if (!LR && !shake) {
                 while ((System.currentTimeMillis() - bla) < 1000) {
-                    if (orientation == 4) {
-                        LR = true;
-                        bla = 0;
+                    synchronized (lockOrientation) {
+                        if (orientation == 4) {
+                            LR = true;
+                            bla = 0;
+                        }
                     }
                 }
                 if (LR) {
@@ -340,11 +312,6 @@ public class TCP_Client extends ConcreteSubject implements Runnable {
                     LR = false;
                 }
             }
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
         }
         return false;
     }
