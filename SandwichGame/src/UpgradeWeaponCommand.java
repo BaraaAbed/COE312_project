@@ -1,8 +1,10 @@
 public class UpgradeWeaponCommand implements Command {
     Player p;
     int upgradePrice;
+    Audio audio;
 
     UpgradeWeaponCommand(){
+        audio = Audio.getInstance();
         p = Player.getInstance();
         upgradePrice = 30;
     }
@@ -26,6 +28,7 @@ public class UpgradeWeaponCommand implements Command {
                 System.out.println("You now possess the highest damage weapon in the game! Use it wisely...");
                 System.out.println("Remaining coins: "+p.getCoins());
             }
+            audio.playSound("upgrade");
         }
         else {
             System.out.println("Bob: To upgarde your weapon, you need 30 coins. This is a supermarket, not a charity!\n"

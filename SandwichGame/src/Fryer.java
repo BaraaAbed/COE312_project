@@ -23,7 +23,7 @@ public class Fryer extends HeckItems {
 	@Override
 	public void thirdDamage() {
 		System.out.println("To bash the fryer, shake it quickly!");
-		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('X', 5, 3.5);
+		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('Y', 5, 3.5);
 	}
 
 }

@@ -23,7 +23,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private UIClient(ArrayList<ConcreteSubject> subjects){
         super(subjects);
         failedSabo = true;
-        audio = new Audio();
+        audio = Audio.getInstance();
         rand = new Random(System.currentTimeMillis());
         commInput = "lol".split(" ");
         player = Player.getInstance();
@@ -111,6 +111,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else {
                         oven.sabotage();
                         if(failedSabo) {
+                            audio.playSound("sabotageFail");
                             System.out.println("You have failed the sabotage!");
                             oven.nextState();
                         }
@@ -124,6 +125,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else {
                         fryer.sabotage();
                         if(failedSabo) {
+                            audio.playSound("sabotageFail");
                             System.out.println("You have failed the sabotage!");
                             fryer.nextState();
                         }
@@ -137,6 +139,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     } else {
                         blender.sabotage();
                         if(failedSabo) {
+                            audio.playSound("sabotageFail");
                             System.out.println("You have failed the sabotage!");
                             blender.nextState();
                         }
@@ -149,10 +152,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     continue;
                 }
                 if(!failedSabo){
+                    audio.playSound("sabotageSuccess");
+                    Thread.sleep(1000);
+                    BackgroundAudio.getInstance().newBGSound("");
                     System.out.println("Gordon Ramsay just went to check on the station, take this chance to SILENTLY sneak behind him and steal the LAMB SAUCE!");
                     Thread.sleep(3000);
                     failedSabo = !TCP_Client.getInstance().peakSoundBelowThreshold(10, -25);
-                    if(failedSabo) System.out.println("You were not quiet enough, and was noticed by Gordon. Thankfully, he mistunderstands it as you running away from the station to not take the blame, so he does nothing.");
+                    if(failedSabo) {
+                        System.out.println("You were not quiet enough, and was noticed by Gordon. Thankfully, he mistunderstands it as you running away from the station to not take the blame, so he does nothing.");
+                        BackgroundAudio.getInstance().newBGSound("kitchen");
+                    }
                 }
             }
             if (!failedSabo){
@@ -162,12 +171,15 @@ public class UIClient extends ConcreteObserver implements Runnable{
             }
             
             if (!failedSabo){
+                audio.playSound("legendaryPickup");
                 System.out.println("You have successfully got the LAMB SAUCE! You ran back to the road.");
                 player.addCoins(10);
+                Thread.sleep(1000);
                 System.out.println("You found a LEGENDARY INGREDIENT, you got 10 coins.");
                 System.out.println("You now have "+player.getCoins()+" coins!");
-                Thread.sleep(4000);
+                Thread.sleep(5000);
                 System.out.println("In the background you hear Gordon screaming: WHERE IS THE LAMBBBBB SAAAAAAUUUUUCCCCCEEEEEE!!!!!!");
+                audio.playSound("sauce");
                 player.getIngredients().add(Sauce.getInstance());
                 player.addItem(player.getCurrentLocation().items.get(3));
                 player.getCurrentLocation().items.remove(3);
@@ -179,9 +191,13 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 + " It's too late to dodge, and it pierces straight through your head. He then comes to you, grabs two pieces of bread, places your head in between."
                 + " He then asks you:\n"
                 + "Gordon: WHAT ARE YOU!\n"
-                + "For some reason, only one phrase appears in your mind at that moment, so you shout before blacking out:\n"
-                + "You: AN IDIOT SANDWICH!\n"
+                + "For some reason, only one phrase appears in your mind at that moment, so you shout before blacking out:");
+                Thread.sleep(4000);
+                System.out.println("You: AN IDIOT SANDWICH!\n"
                 + "You then slowly die. Die as an idiot sandwich.");
+                Thread.sleep(1000);
+                audio.playSound("idiot");
+                Thread.sleep(5000);
                 player.death();
             }
             break;
@@ -213,15 +229,20 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         System.out.println("You walk through your chosen path nervously. Thankfully, it seems you lucked out.");
                     }
                     else if(counter < 4){
+                        audio.playSound("takeDmg");
                         System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with a pretty bad injury."
                         +" Thankfully though, it also pushed you forward, where you coincidentally landed at the end of the path. You look behind you with lingering fear. However, it doesn't seem like the gnome is going to chase you... yet." 
                         + " You should be careful next time, you won't always be this lucky.");
+                        Thread.sleep(1000);
+                        audio.playSound("gnomeLaugh");
                         counter++;
                     } else { //counter == 4
                         System.out.println("You walk through your chosen path nervously. Just as you thought you got lucky, something hits you in the back with the strength of a bull, leaving you with pretty bad injury. "
                         + "This is the fifth time, and you can feel it is the last one as well. The accumulation of injuries is just too much for you, and you start to lose consiousness as you can barely keep your eyes open. " +
                         "Just when you were about to close your eyes, you hear a sound that will haunt you even after death.\n" +
                         "You have been gnomed to death." );
+                        audio.playSound("gnomeKill");
+                        Thread.sleep(5000);
                         player.death();
                         isUpdate = false;
                         counter++;
@@ -231,6 +252,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 if (counter < 5){
                     System.out.println("You finally crossed the paths, and you can see the magic mushroom right there. Just when you were worrying about how to leave, you suddenly notice that there is only one path behind you."
                     +" Not only that, but it seems to be connected directly to the exit, which makes you sigh in relief.");
+                    audio.playSound("pathSuccess");
                     Forest.getInstance().pathCrossed = true;
                     Mushroom.getInstance().takable = true;
                     isUpdate = false;
@@ -290,12 +312,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     failed = !(TCP_Client.getInstance().peakAccAboveThreshold('Z', dodgeDuration, 2.0));
                     break;
                 }
-                if (!failed) System.out.println("O");
+                if (!failed) {
+                    System.out.println("O");
+                    audio.playSound("dodge");
+                }
                 else System.out.println("X");
             }
             if (!failed) System.out.println("Sharp dodging! You dodged the " + fightingEnemy + "'s attack succesfully!");
             else {
                 System.out.println("Not good. You moved directly into the " + fightingEnemy + "'s attack!");
+                audio.playSound("takeDmg");
                 fightingEnemy.attack();
             }
         }
@@ -314,36 +340,42 @@ public class UIClient extends ConcreteObserver implements Runnable{
         else {
             System.out.println("You are on your last straw and the " + fightingEnemy + " is trying to eat you (how ironic)! You must twist in a certain manner to be set free!");
             boolean failed = false;
+            Thread.sleep(3000);
             for (int x = rand.nextInt(3,7); (x > 0) && !failed; x--) {
                 Thread.sleep(2000);
                 switch(rand.nextInt(5)) {
                     case 0:
                     System.out.print("Twist right! ");
-                    failed = !(TCP_Client.getInstance().minGyroBelowThreshold('Y', dodgeDuration, -10.0));
+                    failed = !(TCP_Client.getInstance().minGyroBelowThreshold('Y', dodgeDuration + 0.5, -10.0));
                     break;
                     case 1:
                     System.out.print("Twist left! ");
-                    failed = !(TCP_Client.getInstance().peakGyroAboveThreshold('Y', dodgeDuration, 10.0));
+                    failed = !(TCP_Client.getInstance().peakGyroAboveThreshold('Y', dodgeDuration + 0.5, 10.0));
                     break;
                     case 2:
                     System.out.print("Rotate left! ");
-                    failed = !(TCP_Client.getInstance().peakGyroAboveThreshold('Z', dodgeDuration, 15.0));
+                    failed = !(TCP_Client.getInstance().peakGyroAboveThreshold('Z', dodgeDuration + 0.5, 15.0));
                     break;
                     case 3:
                     System.out.print("Rotate right! ");
-                    failed = !(TCP_Client.getInstance().minGyroBelowThreshold('Z', dodgeDuration, -15.0));
+                    failed = !(TCP_Client.getInstance().minGyroBelowThreshold('Z', dodgeDuration + 0.5, -15.0));
                     break;
                 }
-                if (!failed) System.out.println("O");
+                if (!failed) {
+                    System.out.println("O");
+                    audio.playSound("dodge");
+                }
                 else System.out.println("X");
             }
             LastChance = true;
             if (!failed) {
                 System.out.println("Phew! You luckily escaped the " + fightingEnemy + ". Be careful as you might not be this lucky next time!");
+                Thread.sleep(2000);
                 return true;
             }
             else {
                 System.out.println("Not good. You didn't twist properly and wasn't able to escape the " + fightingEnemy + ".");
+                Thread.sleep(2000);
                 return false;
             }
         }
@@ -370,13 +402,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     offense();
                 }
                 if (player.getHealth() == 0) {
+                    Thread.sleep(2000);
                     notDead = twisting();
                     if(notDead) {
                         System.out.println("You feel embarassed and furious that a sandwich was about to eat you. You unleash your inner potential and feel reinvigorated again. Health restored to full!");
-                        player.setHealth(100); 
+                        player.setHealth(100);
+                        Thread.sleep(2000); 
                     }
                 }
             }
+            Thread.sleep(2000);
             if (fightingEnemy.getHealth() == 0) return true;
             if (!notDead) return false;
             return true;
@@ -385,6 +420,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
 
     //tutorial
     private void tutorial(Player player) throws InterruptedException{
+        audio.playSound("gameBegin");
         System.out.println("Welcome to THE MYTH OF THE LEGENDARY SANDWICH!\n" + 
         "This game was made by the collaborative efforts of:\n" +
         "Ahmad Mansour\n"+
@@ -401,6 +437,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
             }
         }
         isUpdate = false;
+        audio.playSound("start");
         System.out.println("You wake up one day, doing what you do every time. You take your daily shower, brush your teeth, and get on with your day." + 
         " Soon, it's 2 PM in the afternoon, and you are STARVING! Maybe you can check what your fridge has for you today.\n" +
         "(Hint: Type \"use fridge\")");
@@ -467,6 +504,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 Thread.sleep(10);
             }
         }
+        audio.playSound("bob");
         isUpdate = false;
         System.out.println("Bob: Look who we have here. Seems like you have something to ask me, right? Or else, you would've never left your house!\n"+
         "You explain what you found and he seems very interested. He tells you to leave it to him and come back in a second.\n" +
@@ -504,6 +542,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
     private void endGame() throws InterruptedException {
         System.out.println("The time has come. You have gathered all the legendary ingredients, all for this legendary sandwich. You really hope that this isn't some sort of prank. "
         + "It did take a lot of effort to reach this point after all. You take a deep breath as you place all of your ingredients on the table, prepare a plate, and start making the sandwich!");
+        Thread.sleep(5000);
         boolean timeOver = true;
         player.getIngredients().clear();
         player.getIngredients().add(Bread.getInstance());
@@ -517,51 +556,68 @@ public class UIClient extends ConcreteObserver implements Runnable{
         while(timeOver){
             timeOver = false;
             for(int x = 0; x < player.getIngredients().size() && !timeOver; x++){
-                timeOver = !TCP_Client.getInstance().putIngredient(10, "legendary " + player.getIngredients().get(x).toString());
+                timeOver = !TCP_Client.getInstance().putIngredient(20, "legendary " + player.getIngredients().get(x).toString());
                 if(timeOver){
                     System.out.println("The sandwich got bored from how slow you were and all the ingredients went back into your inventory. "
                     + "Let's try that again, but FASTER.");
+                    Thread.sleep(5000);
                 }
             }
         }
+        Thread.sleep(2000);
+        BackgroundAudio.getInstance().newBGSound("");
         System.out.println("Phew, you finally finished the sandwich. Just when you were about to celebrate, you suddenly hear an eerie laughter. "
         + "When you try to find the source, you suddenly notice the sandwich you spent so much effort making float from the plate until it's at eye level. "
-        + "At first, you think you are hallucinating from hunger. That's when it starts talking to you: \n"
-        + "Sandwich: HAHAHAHAHAHA, FINALLY I, THE SANDWICH EMPEROR, AM BACK. Humans, oh humans. You thought that you could keep me sealed forever, ha? Now that I have finally returned, "
+        + "At first, you think you are hallucinating from hunger. That's when it starts talking to you: ");
+        Thread.sleep(10000);
+        audio.playSound("evilLaugh");
+        System.out.println("Sandwich: HAHAHAHAHAHA, FINALLY I, THE SANDWICH EMPEROR, AM BACK. Humans, oh humans. You thought that you could keep me sealed forever, ha? Now that I have finally returned, "
         + "I will make sure that all sandwiches will return to their former glory, while wiping you humans from the face of earth for good! " 
         + "You keep treating us sandwiches as nothing but food. UNACCEPTABLE! You. Yes you, the human who has awakened me. I will use your blood to announce my arrival to the world!\n"
         + "You are still confused about whats happening, when all of a sudden the sandwich starts to attack you!\n"
         + "Left with no other choice, you wield your trusty sword, the blade that stuck by your side through thick and thin and got you through everything up to this point, for one...last...time...FIGHT!");
+        Thread.sleep(10000);
         boolean battleWon;
         player.getCurrentLocation().enemy = FinalBoss.getInstance();
         fightingEnemy = FinalBoss.getInstance();
         battleWon = bossFight();
         if(battleWon){
+            audio.playSound("no");
             System.out.println("You finally killed the legendary sandwich. This is probably the most effort you have ever spent for a sandwich. "
             + "Now, you can finally eat it. You grab the sandwich and dig in. While eating, you start to ponder about what the sandwich said when it first woke up. "
             + "Something about glory days for sandwiches and whatnot. But soon, the intense flavors of the sandwich kick in and you just give up thinking about it. "
-            + "It's been one heck of a journey, and you deserve to enjoy eating the legendary sandwich with every fiber of your body!\n\n"
-            + "ENDING ONE: A tasty sandwich.\n"
-            + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH!");
+            + "It's been one heck of a journey, and you deserve to enjoy eating the legendary sandwich with every fiber of your body!\n");
+            Thread.sleep(15000);
+            System.out.println("ENDING ONE: A tasty sandwich.");
+            Thread.sleep(2000);
+            System.out.println("Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH!");
+            audio.playSound("gameWon");
+            Thread.sleep(5000);
         } else {
+            audio.playSound("eaten");
             System.out.println("You have been eaten by the Sandwich Emperor!\n" 
             + "Sandwich: HAHAHAHAHA, you thought you can kill me? Nice joke! It took the humans thousands of years to come up with a way to seal me. Let alone kill me. "
-            + "It's time to flip this world upside down!\n"
-            + "30 years later...\n" 
-            + "It has been 30 years since the disaster struck the humans on earth. After the Sandwich Emperor has awakened, it has gone around the earth, finding it's brethren. "
+            + "It's time to flip this world upside down!");
+            Thread.sleep(6000);
+            System.out.println("30 years later...");
+            Thread.sleep(2000);
+            System.out.println("It has been 30 years since the disaster struck the humans on earth. After the Sandwich Emperor has awakened, it has gone around the earth, finding it's brethren. "
             + "Now the world is ruled by the sandwiches. There is now the Sandwich Emperor, the Super Falafel, the King Shawarma, the Assassin Burger, and many more sandwiches controlling the different continents on earth. "
             + "On this day, there is a group of surviving humans who have just escaped the pursuit of some local sandwiches, and are taking a break near the ruins of what once was the American University of Sharjah. "
             + "A teenager in that group was looking for a place to sit when all of a sudden, he spotted a piece of paper that looked somewhat like a blueprint of a sword. On the paper were the following words: \n"
-            + "SANDWICH SLAYER\n\n"
-            + "ENDING TWO: The rise of the Sandwich Emperor\n "
-            + "Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH!");
+            + "SANDWICH SLAYER\n");
+            Thread.sleep(15000);
+            System.out.println("ENDING TWO: The rise of the Sandwich Emperor");
+            Thread.sleep(2000);
+            System.out.println("Thank you for playing our game: THE MYTH OF THE LEGENDARY SANDWICH!");
+            audio.playSound("gameLost");
+            Thread.sleep(5000);
         }
         System.exit(0);
 	}
 
     @Override
     public void run() {
-        audio.playSound("Sauce");
         player.setCurrentLocation(House.getInstance());
         try {
             tutorial(player);
@@ -577,6 +633,8 @@ public class UIClient extends ConcreteObserver implements Runnable{
                 if(player.getCurrentLocation() == Warehouse.getInstance() && !(player.getEquipped() instanceof Torch && Torch.on) ){
                     System.out.println("Even though you knew you shouldn't, you still did it. Unsuprisingly, you have been stabbed in the back. 10 times.\n" +
                     "You died. Maybe you should curb your curiosity a little next time.");
+                    audio.playSound("imposterKill");
+                    Thread.sleep(4000);
                     player.death();
                 }
                 if(player.getCurrentLocation() == Sewers.getInstance()){
@@ -613,6 +671,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     }
                     else {
                         Cave.getInstance().blocked = false;
+                        player.setCurrentLocation(Cave.getInstance());
                     }
                 }
                 while(!isUpdate){
@@ -630,6 +689,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         System.out.println("It's too dark in there, maybe you should come back when you find a way to light it up.");
                                     } else {
                                         if(Torch.on){
+                                            audio.playSound("susSound");
                                             prevLoc = player.getCurrentLocation();
                                             player.setCurrentLocation(player.nearby.get(x));
                                             System.out.println(player.getCurrentLocation().getDescription());
@@ -637,11 +697,12 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                     }
                                 } else {
                                     prevLoc = player.getCurrentLocation();
-                                    player.setCurrentLocation(player.nearby.get(x));
-                                    if(player.getCurrentLocation() == Kitchen.getInstance() && Kitchen.getInstance().blocked){
+                                    if(player.nearby.get(x) == Kitchen.getInstance() && Kitchen.getInstance().blocked){
                                         System.out.println("You probably don't want to see Gordan Ramsay again, especially after stealing his LAMB SAUCE");
-                                        player.setCurrentLocation(Road.getInstance());
-                                    } else System.out.println(player.getCurrentLocation().getDescription());
+                                    } else {
+                                        player.setCurrentLocation(player.nearby.get(x));
+                                        System.out.println(player.getCurrentLocation().getDescription());
+                                    }
                                 }
                                 if(player.nearby.get(x) == Forest.getInstance()) {
                                     Forest.getInstance().pathCrossed = false;
@@ -692,8 +753,10 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         if (player.getEquipped() instanceof Shovel) {
                                             player.getEquipped().use();
                                             player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
+                                            audio.playSound("legendaryPickup");
                                             System.out.println("You found the LEGENDARY " + player.getCurrentLocation().items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                             player.addCoins(10);
+                                            Thread.sleep(1000);
                                             System.out.println("You now have "+player.getCoins()+" coins!");
                                             player.addItem(player.getCurrentLocation().items.get(x));
                                             player.getCurrentLocation().items.remove(player.getCurrentLocation().items.get(x));
@@ -702,14 +765,17 @@ public class UIClient extends ConcreteObserver implements Runnable{
                                         }
                                     } else {
                                         player.getIngredients().add((Ingredient) player.getCurrentLocation().items.get(x));
+                                        audio.playSound("legendaryPickup");
                                         System.out.println("You found the LEGENDARY " + player.getCurrentLocation().items.get(x).toString().toUpperCase() + ", you got 10 coins.");
                                         player.addCoins(10);
+                                        Thread.sleep(1000);
                                         System.out.println("You now have "+player.getCoins()+" coins!");
                                         player.addItem(player.getCurrentLocation().items.get(x));
                                         player.getCurrentLocation().items.remove(player.getCurrentLocation().items.get(x));
                                     }
                                     if (player.getIngredients().size() == 7) System.out.println("You have collected all ingredients! Go back to your house to make the LEGENDARY SANDWICH!");
                                 } else {
+                                    audio.playSound("pickup");
                                     System.out.println("You have picked up a " + player.getCurrentLocation().items.get(x));
                                     player.addItem(player.getCurrentLocation().items.get(x));
                                     player.getCurrentLocation().items.remove(player.getCurrentLocation().items.get(x));
@@ -729,6 +795,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     if(commInput[1].equalsIgnoreCase("to")){
                         for(int x = 0; x < player.getCurrentLocation().npcs.size() && !found; x++){
                             if(player.getCurrentLocation().npcs.get(x).toString().equalsIgnoreCase(commInput[2])){
+                                audio.playSound("bob");
                                 player.getCurrentLocation().npcs.get(x).talk();
                                 isUpdate = false;
                                 found = true;
@@ -742,6 +809,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                         if(player.getInv().get(x).toString().equalsIgnoreCase(commInput[1])){
                             player.equip(player.getInv().get(x));
                             System.out.println("You have equipped " + player.getEquipped());
+                            audio.playSound("equip");
                             found = true;
                         }
                     }
@@ -759,6 +827,7 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     case "unequip":
                     System.out.println("You have unequipped " + player.getEquipped());
                     player.unequip();
+                    audio.playSound("unequip");
                     break;
                     case "punch":
                     if(commInput[1].equalsIgnoreCase("wall")){
@@ -775,14 +844,16 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "help":
                     case "?":
-                    System.out.println("go to (location) - allows you to go to location specified"
+                    System.out.println("go to <location> - allows you to go to location specified"
+                                        + "\ntalk to bob - used to begin a conversation with bob the cashier"
                                         + "\nlook around - gives a description of the current location"
                                         + "\nnearby - lists all nearby locations that you can go to"
-                                        + "\ntake (item) - allows you to pick up specified item if allowed to"
-                                        + "\nequip (item) - allows you to equip specified item. Item must be in your inventory"
+                                        + "\ninventory - shows the contents in the your inventory"
+                                        + "\ntake <item> - allows you to pick up specified item if allowed to"
+                                        + "\nequip <item> - allows you to equip specified item. Item must be in your inventory"
                                         + "\nunequip - removes currently equipped item"
-                                        + "\nuse (item) - allows you to use specified item. Item must be equiped first"
-                                        + "\nfight (enemy) - allows you to initiate a fight with the specified enemy."
+                                        + "\nuse <item> - allows you to use specified item. Item must be equiped first"
+                                        + "\nfight <enemy> - allows you to initiate a fight with the specified enemy."
                                         + "\nmake sandwich - used to make the sandwich when all ingredients are collected");
                     break;
                     default:

@@ -17,7 +17,7 @@ public class Oven extends HeckItems {
 	@Override
 	public void secondDamage() {
         System.out.println("To mess up the controls, shake it quickly!");
-		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('X', 5, 3.5);
+		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('Y', 5, 3.5);
 	}
 
 	@Override

@@ -7,8 +7,10 @@ public abstract class Enemy {
     protected String description;
     protected double baseHealth;
     protected DecimalFormat dec;
+    private Audio audio;
 
     public Enemy() {
+        audio = Audio.getInstance();
         this.dec = new DecimalFormat();
         dec.setMaximumFractionDigits(1);
     }
@@ -32,6 +34,7 @@ public abstract class Enemy {
         if (health <= 0){
             health = 0;
             System.out.println("You have successfully killed the " + this);
+            audio.playSound("enemyDeath");
             Player.getInstance().resetHealth();
             Player.getInstance().getCurrentLocation().enemy = null;
             makeTakable();

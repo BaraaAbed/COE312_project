@@ -11,7 +11,7 @@ public class Blender extends HeckItems {
     @Override
 	public void firstDamage() {
         System.out.println("To break the cover, shake it quickly!");
-		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('X', 5, 3.5);
+		UIClient.failedSabo = !TCP_Client.getInstance().avgAccAboveThreshold('Y', 5, 3.5);
 	}
 
 	@Override

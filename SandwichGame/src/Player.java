@@ -18,9 +18,13 @@ public class Player {
     private double dBThreshold;
     private Random rand;
     private State livingState; // state design pattern
+    private BackgroundAudio bgAudio;
+    private Audio audio;
 
     //Constructor
     private Player(){
+        audio = Audio.getInstance();
+        bgAudio = BackgroundAudio.getInstance();
         sword = "Stone sword";
         nearby = new ArrayList<Location>();
         inventory = new ArrayList<Item>();
@@ -50,6 +54,7 @@ public class Player {
     //currentLocation setter
     public void setCurrentLocation(Location l){
         currentLocation = l;
+        bgAudio.newBGSound(l.toString());
     }
 
     //health getter
@@ -76,7 +81,7 @@ public class Player {
     //deals dmg to enemies
     public void attack(double[] avg){
         double rng = rand.nextDouble();
-        double swingMulti = avg[0] + avg[1] + avg[2];
+        double swingMulti = (avg[0] + avg[1] + avg[2])*0.7;
         double totalDmg;
         if (rng > 0.8) {
             System.out.println("Critical hit! That must have hurt!");
@@ -87,26 +92,32 @@ public class Player {
         } else {
             totalDmg = dmg*swingMulti*weapon.getDmgMultiplier();
         }
-        if (avg[0] + avg[1] + avg[2] < 2) {
+        if (avg[0] + avg[1] + avg[2] < 3) {
             System.out.println("Pro tip: You are supposed to be KILLING the enemy, not tickling them! 0 damage done.");
-        } else UIClient.fightingEnemy.takeDmg(totalDmg);
+        } else {
+            UIClient.fightingEnemy.takeDmg(totalDmg);
+            audio.playSound("attack");
+        }
     }
 
     // death function
     public void death() throws InterruptedException {
+        audio.playSound("death");
         nextLivingState();
         printLivingStatus();
+        bgAudio.newBGSound("");
         Thread.sleep(2000);
-        System.out.println("Welcome to being dead. Sucks to be you! Normally this is the end of the path for any other person; however, you aren't any other person so I'm gonna give you another chance :)."
-                            + "\nBUTTTTTT, It wouldn't be fun to just let you go back, right? For this reason I need you to beg at a certain volume. Good luck!");
+        System.out.println("Welcome to being dead. Sucks to be you! Normally this is the end of the path for any other person; however, you aren't any other person so I'm gonna give you another chance :).");
+        Thread.sleep(5000);
+        System.out.println("BUTTTTTT, It wouldn't be fun to just let you go back, right? For this reason I need you to beg at a certain volume. Good luck!");
         Thread.sleep(5000);
         dBThreshold = rand.nextDouble(1, 16);
         boolean gotThreshold = false;
         double avg;
         while (!gotThreshold) {
             avg = TCP_Client.getInstance().getAvgSound(2);
-            if(avg < (dBThreshold - 0.6)) System.out.println("Quieter!");
-            else if (avg > (dBThreshold + 0.6)) System.out.println("Louder!");
+            if(avg < (dBThreshold - 0.4)) System.out.println("Quieter!");
+            else if (avg > (dBThreshold + 0.4)) System.out.println("Louder!");
             else {
                 gotThreshold = true;
                 System.out.println("You got it!");
@@ -120,9 +131,10 @@ public class Player {
         System.out.println("Alright I had enough of your begging. I don't want to hear you again, so get back in there!");
         nextLivingState();
         printLivingStatus();
-        currentLocation = House.getInstance();
+        setCurrentLocation(House.getInstance());
         health = 100;
         updateNearby();
+        audio.playSound("respawn");
     }
 
     // set weapon strategy
