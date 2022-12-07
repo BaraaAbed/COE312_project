@@ -836,7 +836,6 @@ public class UIClient extends ConcreteObserver implements Runnable{
                     break;
                     case "make":
                     if(commInput[1].toLowerCase().equalsIgnoreCase("sandwich") && player.getCurrentLocation() == House.getInstance() && player.getIngredients().size() == 7){
-                        player.nextState();
                         endGame();
                     } else {
                         System.out.println("(Hint: type \"make sandwich\". Note that this can only be typed when you have gathered all the legendary ingredients and have returned to your house)");
